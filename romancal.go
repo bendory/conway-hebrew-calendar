@@ -1,4 +1,4 @@
-package romancal
+package conway
 
 import (
 	"time"
@@ -35,4 +35,10 @@ func (g GregorianDate) height() int {
 		h += 12
 	}
 	return h
+}
+
+// squash fixes invalid dates to valid dates
+func (g *GregorianDate) squash() {
+	d := g.Time()
+	g.y, g.m, g.d = d.Year(), d.Month(), d.Day()
 }

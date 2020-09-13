@@ -1,4 +1,4 @@
-package romancal
+package conway
 
 import (
 	"fmt"
@@ -29,7 +29,7 @@ func TestGregorian(t *testing.T) {
 		gregorian := GregorianDate{y: 1968, d: 24, m: time.February}
 		got, want := fmt.Sprintf("%s", gregorian), "24 February 1968"
 		if want != got {
-			t.Errorf("got=%q; want=%q", got, want)
+			t.Errorf("got %q; want %q", got, want)
 		}
 	})
 	t.Run("height", func(t *testing.T) {
@@ -53,6 +53,24 @@ func TestGregorian(t *testing.T) {
 		} {
 			if got, want := tc.g.height(), tc.h; got != want {
 				t.Errorf("%s: got %d; want %d", tc.g, got, want)
+			}
+		}
+	})
+	t.Run("squash", func(t *testing.T) {
+		for _, tc := range []struct {
+			g, want GregorianDate
+		}{
+			{GregorianDate{y: 2019, d: 15, m: time.January}, GregorianDate{y: 2019, d: 15, m: time.January}},
+			{GregorianDate{y: 2019, d: -5, m: time.January}, GregorianDate{y: 2018, d: 26, m: time.December}},
+			{GregorianDate{y: 2019, d: 34, m: time.December}, GregorianDate{y: 2020, d: 3, m: time.January}},
+			{GregorianDate{y: 2020, d: 34, m: time.February}, GregorianDate{y: 2020, d: 5, m: time.March}},
+			{GregorianDate{y: 2019, d: 34, m: time.February}, GregorianDate{y: 2019, d: 6, m: time.March}},
+			{GregorianDate{y: 1900, d: 34, m: time.February}, GregorianDate{y: 1900, d: 6, m: time.March}},
+		} {
+			was := fmt.Sprintf("%#v", tc.g)
+			tc.g.squash()
+			if tc.g.y != tc.want.y || tc.g.d != tc.want.d || tc.g.m != tc.want.m {
+				t.Errorf("%s: got %#v; want %#v", was, tc.g, tc.want)
 			}
 		}
 	})
