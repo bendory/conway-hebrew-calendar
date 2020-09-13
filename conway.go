@@ -6,9 +6,12 @@ import (
 	"time"
 )
 
+// TODO: This is actually a Gregorian conway; we also need to be able to make a
+// Hebrew conway. See p. 2.
 type conway struct {
 	he, she, it int
 	rh          GregorianDate // Gregorian date of Rosh Hashannah
+	hebrewYears [2]int
 }
 
 func newConway(year int) conway {
@@ -19,6 +22,8 @@ func newConway(year int) conway {
 
 // compute all the needed values for calendar conversions.
 func (cwy *conway) compute() {
+	cwy.hebrewYears[0], cwy.hebrewYears[1] = cwy.rh.y+3760, cwy.rh.y+3761
+
 	// First compute the Roman date of RH; ref: p. 5.
 	// Note that roshHashnnah computes an un-squashed Gregorian date, thereby
 	// considering RH as a September date, which is what is needed to compute
