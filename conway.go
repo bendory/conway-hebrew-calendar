@@ -6,46 +6,78 @@ import (
 	"time"
 )
 
-// roshHashnnah computes the Roman date of RH; ref: p. 5.
-func roshHashannah(y int) GregorianDate {
+type conway struct {
+	he, she, it int
+	rh          GregorianDate // Gregorian date of Rosh Hashannah
+}
+
+func newConway(year int) conway {
+	c := conway{rh: GregorianDate{m: time.September, y: year}}
+	c.compute()
+	return c
+}
+
+// compute all the needed values for calendar conversions.
+func (cwy *conway) compute() {
+	// First compute the Roman date of RH; ref: p. 5.
+	// Note that roshHashnnah computes an un-squashed Gregorian date, thereby
+	// considering RH as a September date, which is what is needed to compute
+	// IT.
 	var b float64 // "bissextile" time; earliest possible RH
 	switch {
-	case y >= 1500 && y < 1700:
+	case cwy.rh.y >= 1500 && cwy.rh.y < 1700:
 		b = 3.0 // Earliest possible RH ~Sept 3
-	case y >= 1700 && y < 1800:
+	case cwy.rh.y >= 1700 && cwy.rh.y < 1800:
 		b = 4.0 // ~Sept 4
-	case y >= 1800 && y < 1900:
+	case cwy.rh.y >= 1800 && cwy.rh.y < 1900:
 		b = 5.0
-	case y >= 1900 && y < 2100:
+	case cwy.rh.y >= 1900 && cwy.rh.y < 2100:
 		b = 6.0
-	case y >= 2100 && y < 2200:
+	case cwy.rh.y >= 2100 && cwy.rh.y < 2200:
 		b = 7.0
-	case y >= 2200 && y < 2300:
+	case cwy.rh.y >= 2200 && cwy.rh.y < 2300:
 		b = 8.0
-	case y >= 2300 && y < 2400:
+	case cwy.rh.y >= 2300 && cwy.rh.y < 2400:
 		b = 9.0
 	default:
 		// TODO: expand valid years.
-		panic(fmt.Sprintf("Rosh Hashannah can only be calculated for 1500-2400, not %d.", y))
+		panic(fmt.Sprintf("Rosh Hashannah can only be calculated for 1500-2400, not %d.", cwy.rh.y))
 	}
-	b += float64(y%4) / 4.0 // adjust "bissextile" time for Roman leap year
+	b += float64(cwy.rh.y%4) / 4.0 // adjust "bissextile" time for Roman leap year
 
-	y -= 1900
+	y := cwy.rh.y - 1900
 	g := y%19 + 1
 	f := float64((12 * g) % 19)
-
-	isHebrewLeapYear := f <= 6
-	previousWasLeapYear := 12 <= f && f <= 18
-	_, _ = isHebrewLeapYear, previousWasLeapYear // Do I need to use these anywhere?
 
 	a := 1.5 * float64(f) // "acrobatic" term jumps from 0-27; how far RH falls from earliest possible RH
 	c := f + 1.0
 	d := (2.0*float64(y) - 1.0) / 35.0
 	e := (f + 1.0) / 760.0 // can be ignored for 1762-2168
-	dayOfMonth := int(math.Round(a + b + (c-d-e)/18.0))
-	rh := GregorianDate{m: time.September, d: dayOfMonth, y: y + 1900}
-	rh.squash()
-	return rh
+	cwy.rh.d = int(math.Round(a + b + (c-d-e)/18.0))
+
+	// Now mark leap years.
+	isLeapYear := f <= 6
+	priorWasLeapYear := 12 <= f && f <= 18
+	_ = priorWasLeapYear // TODO: What is this for?
+	gregorianLeapYear := cwy.rh.y%4 == 0 && (cwy.rh.y%100 != 0 || cwy.rh.y%400 == 0)
+
+	// IT for the given date; ref: p. 3
+	cwy.it = cwy.rh.d + 9
+
+	// HE; ref: p. 3
+	cwy.he = cwy.it + 29
+
+	// SHE; ref: p. 3
+	switch {
+	case isLeapYear && !gregorianLeapYear:
+		cwy.she = cwy.it + 10
+	case isLeapYear && gregorianLeapYear:
+		cwy.she = cwy.it + 11
+	case isLeapYear && !gregorianLeapYear:
+		cwy.she = cwy.it + 40
+	case isLeapYear && gregorianLeapYear:
+		cwy.she = cwy.it + 41
+	}
 }
 
 type partners struct {

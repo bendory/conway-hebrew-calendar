@@ -8,9 +8,10 @@ import (
 // TODO: get a table of years and add tests.
 func TestRoshHashannah(t *testing.T) {
 	y := 2019
-	rh := roshHashannah(y)
+	c := newConway(y)
 	want := GregorianDate{y: y, d: 30, m: time.September}
-	if rh.d != want.d || rh.m != want.m || rh.y != want.y {
-		t.Errorf("got %v; want %v", rh, want)
+	got := c.rh
+	if got.d != want.d || got.m != want.m || got.y != want.y {
+		t.Errorf("got %v; want %v", got, want)
 	}
 }
