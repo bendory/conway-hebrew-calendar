@@ -6,7 +6,7 @@ import (
 )
 
 // roshHashnnah computes the Roman date of RH; ref: p. 5.
-func roshHashannah(y int) {
+func roshHashannah(y int) GregorianDate {
 	y -= 1900
 	g := y%19 + 1
 	f := float32((12 * g) % 19)
@@ -20,8 +20,10 @@ func roshHashannah(y int) {
 	d := (2.0*float32(y) - 1.0) / 35.0
 	e := (f + 1.0) / 760.0 // can be ignored for 1762-2168
 	dayOfMonth := int(math.Round(float64(a + b + (c-d-e)/18.0)))
-	rh := GregorianDate{m: time.September, d: dayOfMonth}
-	_, _, _ = isHebrewLeapYear, previousWasLeapYear, rh
+	rh := GregorianDate{m: time.September, d: dayOfMonth, y: y + 1900}
+	rh.squash()
+	_, _ = isHebrewLeapYear, previousWasLeapYear
+	return rh
 }
 
 type partners struct {
