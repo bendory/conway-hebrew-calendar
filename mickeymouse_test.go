@@ -9,9 +9,15 @@ import (
 func TestRoshHashannah(t *testing.T) {
 	y := 2019
 	m := newMickeyMouse(y)
-	want := GregorianDate{y: y, d: 30, m: time.September}
-	got := m.rh
-	if got.d != want.d || got.m != want.m || got.y != want.y {
-		t.Errorf("got %v; want %v", got, want)
+	wantY, wantM, wantD := y, time.September, 30
+	gotY, gotM, gotD := m.rh.Date()
+	if gotY != wantY {
+		t.Errorf("Year: got %d; want %d", gotY, wantY)
+	}
+	if gotM != wantM {
+		t.Errorf("Month: got %s; want %s", gotM, wantM)
+	}
+	if gotD != wantD {
+		t.Errorf("Day: got %d; want %d", gotD, wantD)
 	}
 }
