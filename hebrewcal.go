@@ -78,7 +78,7 @@ func (h HebrewDate) Format(layout string) string {
 
 // Time returns a time.Time object corresponding to this Date.
 func (h HebrewDate) Time() time.Time {
-	// TODO: convert to GregorianDate and then to time.Time.
+	// TODO: convert to GregorianDate return time.Time.
 	return time.Time{}
 }
 
