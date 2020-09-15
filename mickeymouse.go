@@ -6,23 +6,23 @@ import (
 	"time"
 )
 
-// TODO: This is actually a Gregorian conway; we also need to be able to make a
-// Hebrew conway. See p. 2.
-type conway struct {
+// TODO: This is actually a Gregorian mickeymouse; we also need to be able to make a
+// Hebrew mickeymouse. See p. 2.
+type mickeymouse struct {
 	he, she, it int
 	rh          GregorianDate // Gregorian date of Rosh Hashannah
 	hebrewYears [2]int
 }
 
-func newConway(year int) conway {
-	c := conway{rh: GregorianDate{m: time.September, y: year}}
-	c.compute()
-	return c
+func newMickeyMouse(year int) mickeymouse {
+	m := mickeymouse{rh: GregorianDate{m: time.September, y: year}}
+	m.compute()
+	return m
 }
 
 // compute all the needed values for calendar conversions.
-func (cwy *conway) compute() {
-	cwy.hebrewYears[0], cwy.hebrewYears[1] = cwy.rh.y+3760, cwy.rh.y+3761
+func (m *mickeymouse) compute() {
+	m.hebrewYears[0], m.hebrewYears[1] = m.rh.y+3760, m.rh.y+3761
 
 	// First compute the Roman date of RH; ref: p. 5.
 	// Note that roshHashnnah computes an un-squashed Gregorian date, thereby
@@ -30,27 +30,27 @@ func (cwy *conway) compute() {
 	// IT.
 	var b float64 // "bissextile" time; earliest possible RH
 	switch {
-	case cwy.rh.y >= 1500 && cwy.rh.y < 1700:
+	case m.rh.y >= 1500 && m.rh.y < 1700:
 		b = 3.0 // Earliest possible RH ~Sept 3
-	case cwy.rh.y >= 1700 && cwy.rh.y < 1800:
+	case m.rh.y >= 1700 && m.rh.y < 1800:
 		b = 4.0 // ~Sept 4
-	case cwy.rh.y >= 1800 && cwy.rh.y < 1900:
+	case m.rh.y >= 1800 && m.rh.y < 1900:
 		b = 5.0
-	case cwy.rh.y >= 1900 && cwy.rh.y < 2100:
+	case m.rh.y >= 1900 && m.rh.y < 2100:
 		b = 6.0
-	case cwy.rh.y >= 2100 && cwy.rh.y < 2200:
+	case m.rh.y >= 2100 && m.rh.y < 2200:
 		b = 7.0
-	case cwy.rh.y >= 2200 && cwy.rh.y < 2300:
+	case m.rh.y >= 2200 && m.rh.y < 2300:
 		b = 8.0
-	case cwy.rh.y >= 2300 && cwy.rh.y < 2400:
+	case m.rh.y >= 2300 && m.rh.y < 2400:
 		b = 9.0
 	default:
 		// TODO: expand valid years.
-		panic(fmt.Sprintf("Rosh Hashannah can only be calculated for 1500-2400, not %d.", cwy.rh.y))
+		panic(fmt.Sprintf("Rosh Hashannah can only be calculated for 1500-2400, not %d.", m.rh.y))
 	}
-	b += float64(cwy.rh.y%4) / 4.0 // adjust "bissextile" time for Roman leap year
+	b += float64(m.rh.y%4) / 4.0 // adjust "bissextile" time for Roman leap year
 
-	y := cwy.rh.y - 1900
+	y := m.rh.y - 1900
 	g := y%19 + 1
 	f := float64((12 * g) % 19)
 
@@ -58,30 +58,30 @@ func (cwy *conway) compute() {
 	c := f + 1.0
 	d := (2.0*float64(y) - 1.0) / 35.0
 	e := (f + 1.0) / 760.0 // can be ignored for 1762-2168
-	cwy.rh.d = int(math.Round(a + b + (c-d-e)/18.0))
+	m.rh.d = int(math.Round(a + b + (c-d-e)/18.0))
 
 	// Now mark leap years.
 	isLeapYear := f <= 6
 	priorWasLeapYear := 12 <= f && f <= 18
 	_ = priorWasLeapYear // TODO: What is this for?
-	gregorianLeapYear := cwy.rh.y%4 == 0 && (cwy.rh.y%100 != 0 || cwy.rh.y%400 == 0)
+	gregorianLeapYear := m.rh.y%4 == 0 && (m.rh.y%100 != 0 || m.rh.y%400 == 0)
 
 	// IT for the given date; ref: p. 3
-	cwy.it = cwy.rh.d + 9
+	m.it = m.rh.d + 9
 
 	// HE; ref: p. 3
-	cwy.he = cwy.it + 29
+	m.he = m.it + 29
 
 	// SHE; ref: p. 3
 	switch {
 	case isLeapYear && !gregorianLeapYear:
-		cwy.she = cwy.it + 10
+		m.she = m.it + 10
 	case isLeapYear && gregorianLeapYear:
-		cwy.she = cwy.it + 11
+		m.she = m.it + 11
 	case isLeapYear && !gregorianLeapYear:
-		cwy.she = cwy.it + 40
+		m.she = m.it + 40
 	case isLeapYear && gregorianLeapYear:
-		cwy.she = cwy.it + 41
+		m.she = m.it + 41
 	}
 }
 
