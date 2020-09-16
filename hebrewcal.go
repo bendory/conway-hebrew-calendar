@@ -8,19 +8,19 @@ import (
 type HebrewMonth int
 
 const (
-	Tishrei = 1 + iota
+	Nissan = 3 + iota
+	Iyar
+	Sivan
+	Tamuz
+	Av
+	Elul
+	Tishrei = 8 + iota
 	Marcheshvan
 	Kislev
 	Tevet
 	Shevat
 	Adar_I
 	Adar_II
-	Nissan
-	Iyar
-	Sivan
-	Tamuz
-	Av
-	Elul
 )
 
 func (m HebrewMonth) String() string {
