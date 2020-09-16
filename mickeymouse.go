@@ -144,19 +144,14 @@ func gregorianMickeyMouse(gregorianYear int) mickeymouse {
 	mm.he = mm.it + 29
 
 	// SHE; ref: p. 3
+	mm.she = mm.it + 10
+	if mm.gregorianLeapYear {
+		mm.she++
+	}
 	// NOTE: It isn't clear from p. 3, but SHE depends on priorWasLeapYear, not
 	// isLeapYear.
-	switch {
-	case priorWasLeapYear && !mm.gregorianLeapYear:
-		mm.she = mm.it + 10
-	case priorWasLeapYear && mm.gregorianLeapYear:
-		mm.she = mm.it + 11
-	case !priorWasLeapYear && !mm.gregorianLeapYear:
-		mm.she = mm.it + 40
-	case !priorWasLeapYear && mm.gregorianLeapYear:
-		mm.she = mm.it + 41
-	default:
-		panic(fmt.Sprintf("priorWasLeapYear == %t; gregorianLeapYear == %t", priorWasLeapYear, mm.gregorianLeapYear))
+	if !priorWasLeapYear {
+		mm.she += 30
 	}
 
 	mm.rh = &GregorianDate{time.Date(year, time.September, day, 12, 0, 0, 0, time.Local)}
