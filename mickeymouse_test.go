@@ -6,11 +6,11 @@ import (
 	"time"
 )
 
-// TODO: get a table of years and add tests.
+// TODO: not all tests pass.
 func TestRoshHashannah(t *testing.T) {
 	tests := []struct{ m, d, y, hebrewYear int }{
 		// Cover a 19-year cycle...
-		{9, 10, 2018, 5779},
+		{9, 10, 2018, 5779}, // Sept 10 2018 == RH 5779...
 		{9, 30, 2019, 5780}, // ref: p. 3
 		{9, 19, 2020, 5781},
 		{9, 7, 2021, 5782},
