@@ -154,7 +154,14 @@ func gregorianMickeyMouse(gregorianYear int) mickeymouse {
 		mm.she += 30
 	}
 
+	// We now know rh... unless rh must be postponed...
 	mm.rh = &GregorianDate{time.Date(year, time.September, day, 12, 0, 0, 0, time.Local)}
+	switch mm.rh.Weekday() {
+	case time.Sunday, time.Wednesday, time.Friday: // ref: p. 6 (לא אד״ו ראש)
+		// TODO: under some circumstances we should move back 1d, not forward. When
+		// do we do that?
+		mm.rh = &GregorianDate{time.Date(year, time.September, day+1, 12, 0, 0, 0, time.Local)}
+	}
 	mm.validate()
 	return mm
 }
