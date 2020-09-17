@@ -14,7 +14,7 @@ const (
 )
 
 type HebrewYear struct {
-	int      // the year
+	y        int // the year
 	s        quality
 	leapYear bool
 }
@@ -30,7 +30,7 @@ func (h *HebrewYear) Length() int {
 
 // String implements stringer.String.
 func (h HebrewYear) String() string {
-	return fmt.Sprintf("%d", h.int)
+	return fmt.Sprintf("%d", h.y)
 }
 
 func (h *HebrewYear) monthLength(m HebrewMonth) int {

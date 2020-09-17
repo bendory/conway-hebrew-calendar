@@ -93,7 +93,7 @@ func gregorianMickeyMouse(gregorianYear int) mickeymouse {
 	year := gregorianYear
 	// compute all the needed values for calendar conversions.
 	mm := mickeymouse{mt: gregorianMouse}
-	mm.hebrewYears[0], mm.hebrewYears[1] = HebrewYear{int: year + 3760}, HebrewYear{int: year + 3761}
+	mm.hebrewYears[0], mm.hebrewYears[1] = HebrewYear{y: year + 3760}, HebrewYear{y: year + 3761}
 
 	// First compute the Roman date of RH; ref: p. 5.
 	// Note that roshHashnnah computes an un-squashed Gregorian date, thereby
