@@ -5,6 +5,55 @@ import (
 	"time"
 )
 
+type quality int
+
+const (
+	abundant  = 1
+	regular   = 0
+	deficient = -1
+)
+
+type HebrewYear struct {
+	int      // the year
+	s        quality
+	leapYear bool
+}
+
+func (h *HebrewYear) Length() int {
+	// ref: p. 4
+	days := 354 + int(h.s)
+	if h.leapYear {
+		days += 30
+	}
+	return days
+}
+
+// String implements stringer.String.
+func (h HebrewYear) String() string {
+	return fmt.Sprintf("%d", h.int)
+}
+
+func (h *HebrewYear) monthLength(m HebrewMonth) int {
+	switch m {
+	case Nissan, Sivan, Av, Tishrei, Shevat, Adar_I:
+		return 30
+	case Iyar, Tamuz, Elul, Tevet, Adar_II:
+		return 29
+	case Marcheshvan:
+		if h.s == 1 { // ref: p. 4
+			return 30
+		}
+		return 29
+	case Kislev:
+		if h.s == -1 { // ref: p. 4
+			return 29
+		}
+		return 30
+	default:
+		panic(fmt.Sprint("Invalid month:", m))
+	}
+}
+
 type HebrewMonth int
 
 const (
@@ -56,8 +105,9 @@ func (m HebrewMonth) String() string {
 }
 
 type HebrewDate struct {
-	y, d int
-	m    HebrewMonth
+	y HebrewYear
+	d int
+	m HebrewMonth
 }
 
 func NewHebrewDate(t time.Time) HebrewDate {
@@ -67,7 +117,7 @@ func NewHebrewDate(t time.Time) HebrewDate {
 
 // String implements stringer.String.
 func (h HebrewDate) String() string {
-	return fmt.Sprintf("%d %s %4d", h.d, h.m, h.y)
+	return fmt.Sprintf("%d %s %s", h.d, h.m, h.y)
 }
 
 // Format prints the date based on time.Time.Format layouts.
