@@ -134,6 +134,5 @@ func (h HebrewDate) Time() time.Time {
 
 // height gives the "height" of the date, per Conway.
 func (h HebrewDate) height() int {
-	ht := h.d + int(h.m)
-	return ht
+	return h.d + int(h.m)
 }
