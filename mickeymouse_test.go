@@ -9,6 +9,9 @@ import (
 // TODO: not all tests pass.
 func TestRoshHashannah(t *testing.T) {
 	tests := []struct{ m, d, y, hebrewYear int }{
+		{9, 14, 2015, 5776},
+		{10, 3, 2016, 5777},
+		{9, 21, 2017, 5778},
 		// Cover a 19-year cycle...
 		{9, 10, 2018, 5779}, // Sept 10 2018 == RH 5779...
 		{9, 30, 2019, 5780}, // ref: p. 3
