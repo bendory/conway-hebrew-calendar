@@ -12,8 +12,9 @@ func (mm *mickeymouse) partner(m time.Month) (HebrewMonth, int) {
 	switch m {
 	case time.August:
 		return Tishrei, mm.he
-		// TODO: how do I know if it's Tishrei or Elul?
-		// return Elul, mm.it
+		// Note: Elul, mm.it is an alternative partner for August. It doesn't
+		// actually matter because it+29 = he, so that stretches the Elul date
+		// into Tishrei or vice versa.
 	case time.September:
 		return Marcheshvan, mm.he
 	case time.October:
@@ -124,13 +125,13 @@ func gregorianMickeyMouse(gregorianYear int) mickeymouse {
 
 	y := year - 1900
 	g := year%19 + 1
-	f := float64((12 * g) % 19)
+	f := (12 * g) % 19
 
 	a := 1.5 * float64(f) // "acrobatic" term jumps from 0-27; how far RH falls from earliest possible RH
-	c := f + 1.0
-	d := (2.0*float64(y) - 1.0) / 35.0
-	e := (f + 1.0) / 760.0 // can be ignored for 1762-2168
-	dayFloat := a + b + (c-d-e)/18.0
+	c := f + 1
+	d := float64(2*y-1) / 35.0
+	e := float64(f+1) / 760.0 // can be ignored for 1762-2168
+	dayFloat := a + b + (float64(c)-d-e)/18.0
 	day := int(math.Round(dayFloat))
 
 	// Now mark leap years.
@@ -157,25 +158,24 @@ func gregorianMickeyMouse(gregorianYear int) mickeymouse {
 		mm.she += 30
 	}
 
+	// TODO: the right way to calculate
+	// s = (nextHebrewYear.she - thisHebrewYear.he)
+
 	// We now know rh... unless rh must be postponed...
 	mm.rh = &GregorianDate{time.Date(year, time.September, day, 12, 0, 0, 0, time.Local)}
 	switch mm.rh.Weekday() {
 	case time.Sunday, time.Wednesday, time.Friday: // ref: p. 6 (לא אד״ו ראש)
-		// TODO: under some circumstances we should move back 1d, not forward. When
-		// do we do that?
 		mm.rh = &GregorianDate{time.Date(year, time.September, day+1, 12, 0, 0, 0, time.Local)}
 	case time.Tuesday: // Third דחיה; ref: p. 7
 		if !isLeapYear && dayFloat-float64(day) > .633 {
-			// day+2 shortens the year from 356 --> 354 days and implies that
-			// the prior year must have been abundant.
+			// day+2 shortens this year from 356 --> 354 days and implies that
+			// the prior year was longer.
 			mm.rh = &GregorianDate{time.Date(year, time.September, day+2, 12, 0, 0, 0, time.Local)}
-			mm.hebrewYears[0].s = abundant
 		}
 	case time.Monday: // Fourth דחיה; ref: p. 7
 		if priorWasLeapYear && dayFloat-float64(day) > .898 {
 			// day+1 lengthens the prior year from 382 --> 383 days
 			mm.rh = &GregorianDate{time.Date(year, time.September, day+1, 12, 0, 0, 0, time.Local)}
-			mm.hebrewYears[0].s = deficient
 		}
 	}
 	mm.validate()
