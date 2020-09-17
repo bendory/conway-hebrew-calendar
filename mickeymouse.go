@@ -62,7 +62,7 @@ func ToHebrewDate(date GregorianDate) HebrewDate {
 		hm, heSheIt = mm.partner(m)
 	}
 	hd := ht - heSheIt
-	var hy int
+	var hy HebrewYear
 	if mm.rh.After(date.Time) {
 		hy = mm.hebrewYears[0] // before rh we're in the prior year
 	} else {
@@ -84,7 +84,7 @@ const (
 type mickeymouse struct {
 	he, she, it       int
 	rh                *GregorianDate // Gregorian date of Rosh Hashannah
-	hebrewYears       [2]int
+	hebrewYears       [2]HebrewYear
 	mt                mousetype
 	gregorianLeapYear bool
 }
@@ -93,7 +93,7 @@ func gregorianMickeyMouse(gregorianYear int) mickeymouse {
 	year := gregorianYear
 	// compute all the needed values for calendar conversions.
 	mm := mickeymouse{mt: gregorianMouse}
-	mm.hebrewYears[0], mm.hebrewYears[1] = year+3760, year+3761
+	mm.hebrewYears[0], mm.hebrewYears[1] = HebrewYear{int: year + 3760}, HebrewYear{int: year + 3761}
 
 	// First compute the Roman date of RH; ref: p. 5.
 	// Note that roshHashnnah computes an un-squashed Gregorian date, thereby
@@ -137,6 +137,8 @@ func gregorianMickeyMouse(gregorianYear int) mickeymouse {
 	isLeapYear := f <= 6
 	priorWasLeapYear := 12 <= f && f <= 18
 	mm.gregorianLeapYear = year%4 == 0 && (year%100 != 0 || year%400 == 0)
+	mm.hebrewYears[0].leapYear = priorWasLeapYear
+	mm.hebrewYears[1].leapYear = isLeapYear
 
 	// IT is the day of RH as a September date + 9; ref: p. 3
 	mm.it = day + 9
@@ -164,13 +166,16 @@ func gregorianMickeyMouse(gregorianYear int) mickeymouse {
 		mm.rh = &GregorianDate{time.Date(year, time.September, day+1, 12, 0, 0, 0, time.Local)}
 	case time.Tuesday: // Third דחיה; ref: p. 7
 		if !isLeapYear && dayFloat-float64(day) > .633 {
-			// day+2 shortens the year from 356 --> 354 days
+			// day+2 shortens the year from 356 --> 354 days and implies that
+			// the prior year must have been abundant.
 			mm.rh = &GregorianDate{time.Date(year, time.September, day+2, 12, 0, 0, 0, time.Local)}
+			mm.hebrewYears[0].s = abundant
 		}
 	case time.Monday: // Fourth דחיה; ref: p. 7
 		if priorWasLeapYear && dayFloat-float64(day) > .898 {
 			// day+1 lengthens the prior year from 382 --> 383 days
 			mm.rh = &GregorianDate{time.Date(year, time.September, day+1, 12, 0, 0, 0, time.Local)}
+			mm.hebrewYears[0].s = deficient
 		}
 	}
 	mm.validate()

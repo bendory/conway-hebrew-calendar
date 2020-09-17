@@ -44,7 +44,7 @@ func TestRoshHashannah(t *testing.T) {
 			if gotD != wantD {
 				t.Errorf("Day: got %d; want %d", gotD, wantD)
 			}
-			if got, want := m.hebrewYears[1], test.hebrewYear; got != want {
+			if got, want := m.hebrewYears[1].int, test.hebrewYear; got != want {
 				t.Errorf("got %d; want %d", got, want)
 			}
 			if gotWD := m.rh.Weekday(); gotWD == time.Sunday || gotWD == time.Wednesday || gotWD == time.Friday {
