@@ -101,6 +101,7 @@ func gregorianMickeyMouse(gregorianYear int) mickeymouse {
 	// IT.
 	var b float64 // "bissextile" time; earliest possible RH
 	switch {
+	// b adjusts by centuries; ref: p. 8
 	case year >= 1500 && year < 1700:
 		b = 3.0 // Earliest possible RH ~Sept 3
 	case year >= 1700 && year < 1800:
@@ -129,11 +130,11 @@ func gregorianMickeyMouse(gregorianYear int) mickeymouse {
 	c := f + 1.0
 	d := (2.0*float64(y) - 1.0) / 35.0
 	e := (f + 1.0) / 760.0 // can be ignored for 1762-2168
-	day := int(math.Round(a + b + (c-d-e)/18.0))
+	dayFloat := a + b + (c-d-e)/18.0
+	day := int(math.Round(dayFloat))
 
 	// Now mark leap years.
 	isLeapYear := f <= 6
-	_ = isLeapYear // TODO: what is this for?
 	priorWasLeapYear := 12 <= f && f <= 18
 	mm.gregorianLeapYear = year%4 == 0 && (year%100 != 0 || year%400 == 0)
 
@@ -161,6 +162,16 @@ func gregorianMickeyMouse(gregorianYear int) mickeymouse {
 		// TODO: under some circumstances we should move back 1d, not forward. When
 		// do we do that?
 		mm.rh = &GregorianDate{time.Date(year, time.September, day+1, 12, 0, 0, 0, time.Local)}
+	case time.Tuesday: // Third דחיה; ref: p. 7
+		if !isLeapYear && dayFloat-float64(day) > .633 {
+			// day+2 shortens the year from 356 --> 354 days
+			mm.rh = &GregorianDate{time.Date(year, time.September, day+2, 12, 0, 0, 0, time.Local)}
+		}
+	case time.Monday: // Fourth דחיה; ref: p. 7
+		if priorWasLeapYear && dayFloat-float64(day) > .898 {
+			// day+1 lengthens the prior year from 382 --> 383 days
+			mm.rh = &GregorianDate{time.Date(year, time.September, day+1, 12, 0, 0, 0, time.Local)}
+		}
 	}
 	mm.validate()
 	return mm

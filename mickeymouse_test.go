@@ -42,10 +42,13 @@ func TestRoshHashannah(t *testing.T) {
 				t.Errorf("Month: got %s; want %s", gotM, wantM)
 			}
 			if gotD != wantD {
-				t.Errorf("Day: got %d (%s); want %d", gotD, m.rh.Weekday(), wantD)
+				t.Errorf("Day: got %d; want %d", gotD, wantD)
 			}
 			if got, want := m.hebrewYears[1], test.hebrewYear; got != want {
 				t.Errorf("got %d; want %d", got, want)
+			}
+			if gotWD := m.rh.Weekday(); gotWD == time.Sunday || gotWD == time.Wednesday || gotWD == time.Friday {
+				t.Errorf("לא אד״ו ראש: %s", gotWD)
 			}
 		})
 	}
