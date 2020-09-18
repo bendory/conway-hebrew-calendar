@@ -58,6 +58,29 @@ func TestRoshHashannah(t *testing.T) {
 	}
 }
 
+func TestMickeyMouse(t *testing.T) {
+	tests := []struct{ he, she, it, year int }{
+		{ 71, 53, 42, 2016 },
+		{ 59, 70, 30, 2017 },
+		{ 48, 59, 19, 2018 },
+		{ 68, 49, 39, 2019 },
+	}
+	for _, test := range tests {
+		t.Run(fmt.Sprint(test.year), func(t *testing.T) {
+			m := gregorianMickeyMouse(test.year)
+			if gotHe, wantHe := m.he, test.he; gotHe != wantHe {
+				t.Errorf("HE: got=%d want=%d", gotHe, wantHe)
+			}
+			if gotShe, wantShe := m.she, test.she; gotShe != wantShe {
+				t.Errorf("SHE: got=%d want=%d", gotShe, wantShe)
+			}
+			if gotIt, wantIt := m.it, test.it; gotIt != wantIt {
+				t.Errorf("IT: got=%d want=%d", gotIt, wantIt)
+			}
+		})
+	}
+}
+
 // TODO: add test cases
 // 25 Kislev 5777 == 25 December 2016 p.1
 // 7 Iyar 5779 == 12 May 2019 p.3
