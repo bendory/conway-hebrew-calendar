@@ -39,14 +39,13 @@ func TestRoshHashannah(t *testing.T) {
 			wantY, wantM, wantD := test.y, time.Month(test.m), test.d
 			gotY, gotM, gotD := m.rh.Date()
 			if gotY != wantY {
-				t.Errorf("Year: got %d; want %d", gotY, wantY)
+				t.Errorf("Year(%s, %s): got %d; want %d", m.rh.Weekday(), m.rh, gotY, wantY)
 			}
 			if gotM != wantM {
-				t.Errorf("Month: got %s; want %s", gotM, wantM)
+				t.Errorf("Month(%s, %s): got %s; want %s", m.rh.Weekday(), m.rh, gotM, wantM)
 			}
 			if gotD != wantD {
-				t.Errorf("Day: got %d; want %d", gotD, wantD)
-				t.Errorf("Weekday: got %s", m.rh.Weekday())
+				t.Errorf("Day(%s, %s): got %d; want %d", m.rh.Weekday(), m.rh, gotD, wantD)
 			}
 			if got, want := m.hebrewYears[1].y, test.hebrewYear; got != want {
 				t.Errorf("got %d; want %d", got, want)
