@@ -137,7 +137,7 @@ func gregorianMickeyMouse(gregorianYear int) mickeymouse {
 	d := float64(2*y-1) / 35.0
 	e := float64(f+1) / 760.0 // can be ignored for 1762-2168
 	dayFloat := a + b + (float64(c)-d)/18.0 - e
-	day := int(math.Round(dayFloat))
+	day := int(dayFloat) // truncate, don't round! per david.slusky@ku.edu via email.
 
 	// Now mark leap years.
 	mm.gregorianLeapYear = year%4 == 0 && (year%100 != 0 || year%400 == 0)
