@@ -111,19 +111,12 @@ type HebrewDate struct {
 }
 
 func NewHebrewDate(t time.Time) HebrewDate {
-	// TODO: convert from t to GregorianDate and from there to HebrewDate.
-	return HebrewDate{}
+	return ToHebrewDate(t)
 }
 
 // String implements stringer.String.
 func (h HebrewDate) String() string {
 	return fmt.Sprintf("%d %s %s", h.d, h.m, h.y)
-}
-
-// Format prints the date based on time.Time.Format layouts.
-func (h HebrewDate) Format(layout string) string {
-	// TODO: implement Format for Hebrew dates.
-	return "unimplemented"
 }
 
 // Time returns a time.Time object corresponding to this Date.
