@@ -17,8 +17,9 @@ This repo implements Conway's Hebrew Calendar algorithm in Go.
 Along the implementation path, I found a few notable items that are not explained in
 the paper.
 
-1. On p. 3, when calculating the date of Rosh Hashannah, _truncate_, don't round.
-   This seems to contradict the paper which states that Sept 29.5 --> Sept 30, but
-   author David Slusky told me to round and empirical evidence is that rounding works.
-1. On p. 3, when calculating `SHE`, use `4` in the tens digit if the _outgoing_ year
-   was a leap year.
+1. On p. 3, when calculating the date of Rosh Hashannah, _truncate_, don't
+   round.  This seems to contradict the paper which states that Sept 29.5 -->
+   Sept 30, but author David Slusky told me to round and empirical evidence is
+   that rounding works.
+1. On p. 3, when calculating `SHE`, use `4` in the tens digit if the _outgoing_
+   year was a leap year.
