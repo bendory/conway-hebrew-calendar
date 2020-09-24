@@ -59,10 +59,10 @@ func TestRoshHashannah(t *testing.T) {
 
 func TestMickeyMouse(t *testing.T) {
 	tests := []struct{ he, she, it, year int }{
-		{ 71, 53, 42, 2016 },
-		{ 59, 70, 30, 2017 },
-		{ 48, 59, 19, 2018 },
-		{ 68, 49, 39, 2019 },
+		{71, 53, 42, 2016},
+		{59, 70, 30, 2017},
+		{48, 59, 19, 2018},
+		{68, 49, 39, 2019},
 	}
 	for _, test := range tests {
 		t.Run(fmt.Sprint(test.year), func(t *testing.T) {
