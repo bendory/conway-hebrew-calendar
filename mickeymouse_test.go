@@ -81,7 +81,33 @@ func TestMickeyMouse(t *testing.T) {
 }
 
 // TODO: add test cases
-// 25 Kislev 5777 == 25 December 2016 p.1
-// 7 Iyar 5779 == 12 May 2019 p.3
-// 7 April 2019 == 2 Nissan 5779 p. 3
-// 30 September 2019 == 1 Tishrei 5780 p. 3
+func TestToHebrewDate(t *testing.T) {
+	tests := []struct {
+		hd HebrewDate
+		t  time.Time
+	}{{
+		// ref: p. 1
+		HebrewDate{y: HebrewYear{y: 5777}, d: 25, m: Kislev},
+		time.Date(2016, time.December, 25, 12, 0, 0, 0, time.Local),
+	}, {
+		// ref: p. 3
+		HebrewDate{y: HebrewYear{y: 5779}, d: 7, m: Iyar},
+		time.Date(2019, time.May, 12, 12, 0, 0, 0, time.Local),
+	}, {
+		// ref: p. 3
+		HebrewDate{y: HebrewYear{y: 5779}, d: 2, m: Nissan},
+		time.Date(2019, time.April, 7, 12, 0, 0, 0, time.Local),
+	}, {
+		// ref: p. 3
+		HebrewDate{y: HebrewYear{y: 5780}, d: 1, m: Tishrei},
+		time.Date(2019, time.September, 30, 12, 0, 0, 0, time.Local),
+	}}
+
+	for _, test := range tests {
+		t.Run(fmt.Sprint(test.hd), func(t *testing.T) {
+			if got, want := ToHebrewDate(test.t), test.hd; got != want {
+				t.Errorf("got %v, want %v", got, want)
+			}
+		})
+	}
+}
