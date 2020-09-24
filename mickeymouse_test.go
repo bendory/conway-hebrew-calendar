@@ -68,13 +68,13 @@ func TestMickeyMouse(t *testing.T) {
 		t.Run(fmt.Sprint(test.year), func(t *testing.T) {
 			m := gregorianMickeyMouse(test.year)
 			if gotHe, wantHe := m.he, test.he; gotHe != wantHe {
-				t.Errorf("HE: got=%d want=%d", gotHe, wantHe)
+				t.Errorf("HE:  got=%d want=%d", gotHe, wantHe)
 			}
 			if gotShe, wantShe := m.she, test.she; gotShe != wantShe {
 				t.Errorf("SHE: got=%d want=%d", gotShe, wantShe)
 			}
 			if gotIt, wantIt := m.it, test.it; gotIt != wantIt {
-				t.Errorf("IT: got=%d want=%d", gotIt, wantIt)
+				t.Errorf("IT:  got=%d want=%d", gotIt, wantIt)
 			}
 		})
 	}
