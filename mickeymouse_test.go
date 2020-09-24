@@ -6,7 +6,6 @@ import (
 	"time"
 )
 
-// TODO: not all tests pass.
 func TestRoshHashannah(t *testing.T) {
 	tests := []struct{ m, d, y, hebrewYear int }{
 		{9, 14, 2015, 5776},
