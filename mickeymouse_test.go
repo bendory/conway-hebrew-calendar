@@ -34,7 +34,7 @@ func TestRoshHashannah(t *testing.T) {
 		{9, 22, 2036, 5797},
 	}
 	for _, test := range tests {
-		t.Run(fmt.Sprint(test.hebrewYear), func(t *testing.T) {
+		t.Run(fmt.Sprintf("%d-%d", test.y, test.hebrewYear), func(t *testing.T) {
 			m := gregorianMickeyMouse(test.y)
 			wantY, wantM, wantD := test.y, time.Month(test.m), test.d
 			gotY, gotM, gotD := m.rh.Date()
