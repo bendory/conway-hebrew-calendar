@@ -61,7 +61,7 @@ func TestRoshHashannah(t *testing.T) {
 	}
 }
 
-func TestMickeyMouse(t *testing.T) {
+func TestGregorianMickeyMouse(t *testing.T) {
 	tests := []struct{ he, she, it, year int }{
 		// 2016-2018 ref: p. 2
 		{71, 53, 42, 2016},
@@ -72,6 +72,30 @@ func TestMickeyMouse(t *testing.T) {
 	for _, test := range tests {
 		t.Run(fmt.Sprint(test.year), func(t *testing.T) {
 			m := gregorianMickeyMouse(test.year)
+			if got, want := m.he, test.he; got != want {
+				t.Errorf("HE:  got=%d want=%d", got, want)
+			}
+			if got, want := m.she, test.she; got != want {
+				t.Errorf("SHE: got=%d want=%d", got, want)
+			}
+			if got, want := m.it, test.it; got != want {
+				t.Errorf("IT:  got=%d want=%d", got, want)
+			}
+		})
+	}
+}
+
+func TestHebrewMickeyMouse(t *testing.T) {
+	tests := []struct{ he, she, it, year int }{
+		// 5776-5779 ref: p. 2
+		{52, 53, 42, 5776}, // I calculated he=52 based on RH 2015
+		{71, 70, 30, 5777},
+		{59, 59, 19, 5778},
+		{48, 49, 39, 5779}, // ref: p. 6; I calculated he=48
+	}
+	for _, test := range tests {
+		t.Run(fmt.Sprint(test.year), func(t *testing.T) {
+			m := hebrewMickeyMouse(test.year)
 			if got, want := m.he, test.he; got != want {
 				t.Errorf("HE:  got=%d want=%d", got, want)
 			}
@@ -106,6 +130,9 @@ func TestConversions(t *testing.T) {
 		// ref: p. 3
 		HebrewDate{y: HebrewYear{y: 5780}, d: 1, m: Tishrei},
 		time.Date(2019, time.September, 30, 12, 0, 0, 0, time.Local),
+	}, {
+		HebrewDate{y: HebrewYear{y: 5728}, d: 25, m: Shevat},
+		time.Date(1968, time.February, 24, 12, 0, 0, 0, time.Local),
 	}}
 
 	for _, test := range tests {

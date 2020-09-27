@@ -57,13 +57,13 @@ func (h *HebrewYear) monthLength(m HebrewMonth) int {
 type HebrewMonth int
 
 const (
-	Nissan = 3 + iota
+	Nissan HebrewMonth = 3 + iota
 	Iyar
 	Sivan
 	Tamuz
 	Av
 	Elul
-	Tishrei = 8 + iota
+	Tishrei
 	Marcheshvan
 	Kislev
 	Tevet
@@ -71,6 +71,13 @@ const (
 	Adar_I
 	Adar_II
 )
+
+func (m HebrewMonth) num() int {
+	if m < Tishrei {
+		return int(m)
+	}
+	return int(m) - 1
+}
 
 func (m HebrewMonth) String() string {
 	switch m {

@@ -196,7 +196,7 @@ func ToHebrewDate(t time.Time) HebrewDate {
 	hm, heSheIt := mm.partner(m)
 
 	// If height < heSheIt, then stretch...
-	if heSheIt > ht { // ref: p. 3
+	for heSheIt > ht { // ref: p. 3
 		m--
 		if m < time.January {
 			m = time.December
@@ -220,13 +220,13 @@ func FromHebrewDate(h HebrewDate) time.Time {
 	mm := hebrewMickeyMouse(h.y.y)
 	heSheIt := mm.heSheIt(h.m)
 	ht := h.d + heSheIt
-	gm := time.Month(int(h.m))
+	gm := time.Month(h.m.num())
 	gd := ht - int(gm)
 	if gm > time.December {
 		gm -= 12
 	}
 	gy := mm.rh.Year()
-	if h.m < Elul || h.m > Kislev || gm == time.January || (gm == time.December && gd > 31) {
+	if h.m <= Elul || gm == time.January {
 		gy++
 	}
 	return time.Date(gy, gm, gd, 12, 0, 0, 0, time.Local)
