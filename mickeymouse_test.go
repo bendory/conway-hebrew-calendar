@@ -6,6 +6,10 @@ import (
 	"time"
 )
 
+func dmy(t time.Time) string {
+	return t.Format("02 January 2006")
+}
+
 func TestRoshHashannah(t *testing.T) {
 	tests := []struct{ m, d, y, hebrewYear int }{
 		{9, 14, 2015, 5776},
@@ -49,8 +53,9 @@ func TestRoshHashannah(t *testing.T) {
 			if got, want := m.hebrewYears[1].y, test.hebrewYear; got != want {
 				t.Errorf("got %d; want %d", got, want)
 			}
-			if gotWD := m.rh.Weekday(); gotWD == time.Sunday || gotWD == time.Wednesday || gotWD == time.Friday {
-				t.Errorf("לא אד״ו ראש: %s", gotWD)
+			switch m.rh.Weekday() {
+			case time.Sunday, time.Wednesday, time.Friday:
+				t.Errorf("לא אד״ו ראש: %s", m.rh.Weekday())
 			}
 		})
 	}
@@ -104,9 +109,9 @@ func TestToHebrewDate(t *testing.T) {
 	}}
 
 	for _, test := range tests {
-		t.Run(fmt.Sprint(test.hd), func(t *testing.T) {
-			if got, want := ToHebrewDate(test.t), test.hd; got != want {
-				t.Errorf("got %v, want %v", got, want)
+		t.Run(fmt.Sprintf("%v==%v", dmy(test.t), test.hd), func(t *testing.T) {
+			if got, want := ToHebrewDate(test.t), test.hd; !got.Equals(want) {
+				t.Errorf("%v: got %v, want %v", dmy(test.t), got, want)
 			}
 		})
 	}
