@@ -6,100 +6,18 @@ import (
 	"time"
 )
 
-// partner converts a time.Month to its partner HebrewMonth and heSheIt value;
-// ref: p. 2.
-func (mm *mickeymouse) partner(m time.Month) (HebrewMonth, int) {
-	switch m {
-	case time.August:
-		return Tishrei, mm.he
-		// Note: Elul, mm.it is an alternative partner for August. It doesn't
-		// actually matter because it+29 = he, so that stretches the Elul date
-		// into Tishrei or vice versa.
-	case time.September:
-		return Marcheshvan, mm.he
-	case time.October:
-		return Kislev, int(math.Max(float64(mm.he), float64(mm.she)))
-	case time.November:
-		return Tevet, mm.she
-	case time.December:
-		return Shevat, mm.she
-	case time.January:
-		return Adar_I, mm.she
-	case time.February:
-		return Adar_II, mm.she
-	case time.March:
-		return Nissan, mm.it
-	case time.April:
-		return Iyar, mm.it
-	case time.May:
-		return Sivan, mm.it
-	case time.June:
-		return Tamuz, mm.it
-	case time.July:
-		return Av, mm.it
-	default:
-		panic(fmt.Sprint("Unknown month:", m))
-	}
-}
-
-func height(d int, m time.Month) int {
-	ht := d + int(m)
-	if m < time.March {
-		ht += 12
-	}
-	return ht
-}
-
-func ToHebrewDate(t time.Time) HebrewDate {
-	y, m, d := t.Date()
-	ht := height(d, m)
-
-	mm := gregorianMickeyMouse(y)
-	hm, heSheIt := mm.partner(m)
-
-	// If height < heSheIt, then stretch...
-	if heSheIt > ht { // ref: p. 3
-		m--
-		if m < time.January {
-			m = time.December
-		}
-		d += mm.monthLength(m)
-		ht = height(d, m)
-		hm, heSheIt = mm.partner(m)
-	}
-	hd := ht - heSheIt
-	var hy HebrewYear
-	if mm.rh.After(t) {
-		hy = mm.hebrewYears[0] // before rh we're in the prior year
-	} else {
-		hy = mm.hebrewYears[1] // after rh we're in the next year
-	}
-
-	return HebrewDate{d: hd, m: hm, y: hy}
-}
-
-type mousetype int8
-
-const (
-	gregorianMouse = 1
-	hebrewMouse    = 2
-)
-
-// TODO: This is actually a Gregorian mickeymouse; we also need to be able to make a
-// Hebrew mickeymouse. See p. 2.
-type mickeymouse struct {
+// gmm is a Gregorian mickeymouse; ref: p. 2.
+type gmm struct {
 	he, she, it       int
 	rh                time.Time // Gregorian date of Rosh Hashannah
 	hebrewYears       [2]HebrewYear
-	mt                mousetype
 	gregorianLeapYear bool
 }
 
-func gregorianMickeyMouse(gregorianYear int) mickeymouse {
-	year := gregorianYear
-	// compute all the needed values for calendar conversions.
-	mm := mickeymouse{mt: gregorianMouse}
-	mm.hebrewYears[0], mm.hebrewYears[1] = HebrewYear{y: year + 3760}, HebrewYear{y: year + 3761}
+func gregorianMickeyMouse(year int) gmm {
+	mm := gmm{
+		hebrewYears: [2]HebrewYear{HebrewYear{y: year + 3760}, HebrewYear{y: year + 3761}},
+	}
 
 	// First compute the Roman date of RH; ref: p. 5.
 	// Note that roshHashnnah computes an un-squashed Gregorian date, thereby
@@ -187,7 +105,43 @@ func gregorianMickeyMouse(gregorianYear int) mickeymouse {
 	return mm
 }
 
-func (mm *mickeymouse) monthLength(m time.Month) int {
+// partner converts a time.Month to its partner HebrewMonth and heSheIt value;
+// ref: p. 2.
+func (mm *gmm) partner(m time.Month) (HebrewMonth, int) {
+	switch m {
+	case time.August:
+		return Tishrei, mm.he
+		// Note: Elul, mm.it is an alternative partner for August. It doesn't
+		// actually matter because it+29 = he, so that stretches the Elul date
+		// into Tishrei or vice versa.
+	case time.September:
+		return Marcheshvan, mm.he
+	case time.October:
+		return Kislev, int(math.Max(float64(mm.he), float64(mm.she)))
+	case time.November:
+		return Tevet, mm.she
+	case time.December:
+		return Shevat, mm.she
+	case time.January:
+		return Adar_I, mm.she
+	case time.February:
+		return Adar_II, mm.she
+	case time.March:
+		return Nissan, mm.it
+	case time.April:
+		return Iyar, mm.it
+	case time.May:
+		return Sivan, mm.it
+	case time.June:
+		return Tamuz, mm.it
+	case time.July:
+		return Av, mm.it
+	default:
+		panic(fmt.Sprint("Unknown month:", m))
+	}
+}
+
+func (mm *gmm) monthLength(m time.Month) int {
 	switch m {
 	case time.January, time.March, time.May, time.July, time.August, time.October, time.December:
 		return 31
@@ -203,7 +157,7 @@ func (mm *mickeymouse) monthLength(m time.Month) int {
 	}
 }
 
-func (mm *mickeymouse) validate() {
+func (mm *gmm) validate() {
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Printf("%#v\n", mm)
@@ -224,5 +178,111 @@ func (mm *mickeymouse) validate() {
 	}
 	if mm.it >= mm.he {
 		panic(fmt.Sprintf("IT<HE: IT==%d HE==%d", mm.it, mm.he))
+	}
+}
+
+func (mm *gmm) height(d int, m time.Month) int {
+	ht := d + int(m)
+	if m < time.March {
+		ht += 12
+	}
+	return ht
+}
+
+func ToHebrewDate(t time.Time) HebrewDate {
+	y, m, d := t.Date()
+	mm := gregorianMickeyMouse(y)
+	ht := mm.height(d, m)
+	hm, heSheIt := mm.partner(m)
+
+	// If height < heSheIt, then stretch...
+	if heSheIt > ht { // ref: p. 3
+		m--
+		if m < time.January {
+			m = time.December
+		}
+		d += mm.monthLength(m)
+		ht = mm.height(d, m)
+		hm, heSheIt = mm.partner(m)
+	}
+	hd := ht - heSheIt
+	var hy HebrewYear
+	if mm.rh.After(t) {
+		hy = mm.hebrewYears[0] // before rh we're in the prior year
+	} else {
+		hy = mm.hebrewYears[1] // after rh we're in the next year
+	}
+
+	return HebrewDate{d: hd, m: hm, y: hy}
+}
+
+func FromHebrewDate(h HebrewDate) time.Time {
+	mm := hebrewMickeyMouse(h.y.y)
+	heSheIt := mm.heSheIt(h.m)
+	ht := h.d + heSheIt
+	gm := time.Month(int(h.m))
+	gd := ht - int(gm)
+	if gm > time.December {
+		gm -= 12
+	}
+	gy := mm.rh.Year()
+	if h.m < Elul || h.m > Kislev || gm == time.January || (gm == time.December && gd > 31) {
+		gy++
+	}
+	return time.Date(gy, gm, gd, 12, 0, 0, 0, time.Local)
+}
+
+// hmm is a Hebrew mickeymouse; ref: p. 2.
+type hmm struct {
+	he, she, it int
+	rh          time.Time // Gregorian date of Rosh Hashannah
+	y           HebrewYear
+}
+
+func hebrewMickeyMouse(year int) hmm {
+	gregorianRHyear := year - 3761
+	thisGmm := gregorianMickeyMouse(gregorianRHyear)
+	nextGmm := gregorianMickeyMouse(gregorianRHyear + 1)
+	if thisGmm.hebrewYears[1].y != nextGmm.hebrewYears[0].y {
+		panic(fmt.Sprintf("Hebrew year mismatch: %d != %d", thisGmm.hebrewYears[1].y, nextGmm.hebrewYears[0].y))
+	}
+	if thisGmm.hebrewYears[1].leapYear != nextGmm.hebrewYears[0].leapYear {
+		panic(fmt.Sprintf("Hebrew leapYear mismatch: %t != %t", thisGmm.hebrewYears[1].leapYear, nextGmm.hebrewYears[0].leapYear))
+	}
+	mm := hmm{
+		he:  thisGmm.he,
+		she: nextGmm.she,
+		it:  nextGmm.it,
+		rh:  thisGmm.rh,
+		y: HebrewYear{
+			y:        year,
+			leapYear: thisGmm.hebrewYears[1].leapYear,
+			s:        quality(nextGmm.she - thisGmm.he),
+		},
+	}
+	mm.validate()
+	return mm
+}
+
+func (mm *hmm) heSheIt(m HebrewMonth) int {
+	switch m {
+	case Tishrei, Marcheshvan:
+		return mm.he
+	case Kislev:
+		return int(math.Max(float64(mm.he), float64(mm.she)))
+	case Tevet, Shevat, Adar_I, Adar_II:
+		return mm.she
+	case Nissan, Iyar, Sivan, Tamuz, Av, Elul:
+		return mm.it
+	default:
+		panic(fmt.Sprintf("Unknown month: %v", m))
+	}
+}
+
+func (mm *hmm) validate() {
+	switch mm.y.s {
+	case abundant, regular, deficient:
+	default:
+		panic(fmt.Sprintf("s = %d!?", mm.y.s))
 	}
 }
