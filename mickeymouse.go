@@ -59,11 +59,11 @@ func ToHebrewDate(t time.Time) HebrewDate {
 
 	// If height < heSheIt, then stretch...
 	if heSheIt > ht { // ref: p. 3
-		d += mm.monthLength(m)
 		m--
 		if m < time.January {
 			m = time.December
 		}
+		d += mm.monthLength(m)
 		ht = height(d, m)
 		hm, heSheIt = mm.partner(m)
 	}
