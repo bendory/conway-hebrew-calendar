@@ -129,3 +129,8 @@ func (h HebrewDate) Time() time.Time {
 func (h HebrewDate) height() int {
 	return h.d + int(h.m)
 }
+
+// equals compares two HebrewDates for equality
+func (h HebrewDate) Equals(d HebrewDate) bool {
+	return h.d == d.d && h.m == d.m && h.y.y == d.y.y
+}
