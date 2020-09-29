@@ -105,42 +105,6 @@ func gregorianMickeyMouse(year int) gmm {
 	return mm
 }
 
-// partner converts a time.Month to its partner HebrewMonth and heSheIt value;
-// ref: p. 2.
-func (mm *gmm) partner(m time.Month) (HebrewMonth, int) {
-	switch m {
-	case time.August:
-		return Tishrei, mm.he
-		// Note: Elul, mm.it is an alternative partner for August. It doesn't
-		// actually matter because it+29 = he, so that stretches the Elul date
-		// into Tishrei or vice versa.
-	case time.September:
-		return Marcheshvan, mm.he
-	case time.October:
-		return Kislev, int(math.Max(float64(mm.he), float64(mm.she)))
-	case time.November:
-		return Tevet, mm.she
-	case time.December:
-		return Shevat, mm.she
-	case time.January:
-		return Adar_I, mm.she
-	case time.February:
-		return Adar_II, mm.she
-	case time.March:
-		return Nissan, mm.it
-	case time.April:
-		return Iyar, mm.it
-	case time.May:
-		return Sivan, mm.it
-	case time.June:
-		return Tamuz, mm.it
-	case time.July:
-		return Av, mm.it
-	default:
-		panic(fmt.Sprint("Unknown month:", m))
-	}
-}
-
 func (mm *gmm) monthLength(m time.Month) int {
 	switch m {
 	case time.January, time.March, time.May, time.July, time.August, time.October, time.December:
@@ -191,9 +155,25 @@ func (mm *gmm) height(d int, m time.Month) int {
 
 func ToHebrewDate(t time.Time) HebrewDate {
 	y, m, d := t.Date()
-	mm := gregorianMickeyMouse(y)
-	ht := mm.height(d, m)
-	hm, heSheIt := mm.partner(m)
+	gMM := gregorianMickeyMouse(y)
+
+	var hMM hmm
+	switch {
+	case m > gMM.rh.Month():
+		hMM = hebrewMickeyMouse(gMM.hebrewYears[1].y)
+	case m < gMM.rh.Month():
+		hMM = hebrewMickeyMouse(gMM.hebrewYears[0].y)
+	default: // m is RH month
+	    switch {
+		case d >= gMM.rh.Day():
+			hMM = hebrewMickeyMouse(gMM.hebrewYears[1].y)
+		default: // d is before RH
+			hMM = hebrewMickeyMouse(gMM.hebrewYears[0].y)
+		}
+	}
+
+	ht := gMM.height(d, m)
+	hm, heSheIt := hMM.partner(m)
 
 	// If height < heSheIt, then stretch...
 	for heSheIt > ht { // ref: p. 3
@@ -201,19 +181,12 @@ func ToHebrewDate(t time.Time) HebrewDate {
 		if m < time.January {
 			m = time.December
 		}
-		d += mm.monthLength(m)
-		ht = mm.height(d, m)
-		hm, heSheIt = mm.partner(m)
+		d += gMM.monthLength(m)
+		ht = gMM.height(d, m)
+		hm, heSheIt = hMM.partner(m)
 	}
 	hd := ht - heSheIt
-	var hy HebrewYear
-	if mm.rh.After(t) {
-		hy = mm.hebrewYears[0] // before rh we're in the prior year
-	} else {
-		hy = mm.hebrewYears[1] // after rh we're in the next year
-	}
-
-	return HebrewDate{d: hd, m: hm, y: hy}
+	return HebrewDate{d: hd, m: hm, y: hMM.y}
 }
 
 func FromHebrewDate(h HebrewDate) time.Time {
@@ -284,5 +257,41 @@ func (mm *hmm) validate() {
 	case abundant, regular, deficient:
 	default:
 		panic(fmt.Sprintf("s = %d!?", mm.y.s))
+	}
+}
+
+// partner converts a time.Month to its partner HebrewMonth and heSheIt value;
+// ref: p. 2.
+func (mm *hmm) partner(m time.Month) (HebrewMonth, int) {
+	switch m {
+	case time.August:
+		return Tishrei, mm.he
+		// Note: Elul, mm.it is an alternative partner for August. It doesn't
+		// actually matter because it+29 = he, so that stretches the Elul date
+		// into Tishrei or vice versa.
+	case time.September:
+		return Marcheshvan, mm.he
+	case time.October:
+		return Kislev, int(math.Max(float64(mm.he), float64(mm.she)))
+	case time.November:
+		return Tevet, mm.she
+	case time.December:
+		return Shevat, mm.she
+	case time.January:
+		return Adar_I, mm.she
+	case time.February:
+		return Adar_II, mm.she
+	case time.March:
+		return Nissan, mm.it
+	case time.April:
+		return Iyar, mm.it
+	case time.May:
+		return Sivan, mm.it
+	case time.June:
+		return Tamuz, mm.it
+	case time.July:
+		return Av, mm.it
+	default:
+		panic(fmt.Sprint("Unknown month:", m))
 	}
 }
