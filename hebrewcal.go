@@ -126,12 +126,6 @@ func (h HebrewDate) String() string {
 	return fmt.Sprintf("%d %s %s", h.d, h.m, h.y)
 }
 
-// Time returns a time.Time object corresponding to this Date.
-func (h HebrewDate) Time() time.Time {
-	// TODO: convert to GregorianDate return time.Time.
-	return time.Time{}
-}
-
 // height gives the "height" of the date, per Conway.
 func (h HebrewDate) height() int {
 	return h.d + int(h.m)
