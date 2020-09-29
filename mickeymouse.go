@@ -99,8 +99,6 @@ func gregorianMickeyMouse(year int) gmm {
 		mm.she += 30
 	}
 
-	// TODO: the right way to calculate
-	// s = (nextHebrewYear.she - thisHebrewYear.he)
 	mm.validate()
 	return mm
 }
