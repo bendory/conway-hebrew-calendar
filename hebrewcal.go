@@ -1,9 +1,6 @@
 package conway
 
-import (
-	"fmt"
-	"time"
-)
+import "fmt"
 
 type quality int
 
@@ -122,18 +119,9 @@ type HebrewDate struct {
 	M HebrewMonth
 }
 
-func NewHebrewDate(t time.Time) HebrewDate {
-	return ToHebrewDate(t)
-}
-
 // String implements stringer.String.
 func (h HebrewDate) String() string {
 	return fmt.Sprintf("%d %s %s", h.D, h.M, h.Y)
-}
-
-// height gives the "height" of the date, per Conway.
-func (h HebrewDate) height() int {
-	return h.D + int(h.M)
 }
 
 // equals compares two HebrewDates for equality
