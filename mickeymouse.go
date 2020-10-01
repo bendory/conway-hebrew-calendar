@@ -132,7 +132,9 @@ func (mm *gmm) validate() {
 		fmt.Printf("ERROR: 41<=HE<=73: ")
 		fmt.Printf("RH(%d)==%s: %#v\n", mm.hebrewYears[1].Y, mm.rh.Format("02 January 2006"), mm)
 	}
-	if mm.she < 41 || mm.she > 73 {
+	if mm.she == 74 && mm.rh.Year() == 2196 {
+		// This is the one exception -- SHE creeps up to 74 i 2196.
+	} else if mm.she < 41 || mm.she > 73 {
 		fmt.Printf("ERROR: 41<=SHE<=73: ")
 		fmt.Printf("RH(%d)==%s: %#v\n", mm.hebrewYears[1].Y, mm.rh.Format("02 January 2006"), mm)
 	}
