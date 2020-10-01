@@ -50,7 +50,7 @@ func TestRoshHashannah(t *testing.T) {
 			if gotD != wantD {
 				t.Errorf("Day(%s, %s): got %d; want %d", m.rh.Weekday(), m.rh, gotD, wantD)
 			}
-			if got, want := m.hebrewYears[1].y, test.hebrewYear; got != want {
+			if got, want := m.hebrewYears[1].Y, test.hebrewYear; got != want {
 				t.Errorf("got %d; want %d", got, want)
 			}
 			switch m.rh.Weekday() {
@@ -116,23 +116,32 @@ func TestConversions(t *testing.T) {
 		t  time.Time
 	}{{
 		// ref: p. 1
-		HebrewDate{Y: HebrewYear{y: 5777}, D: 25, M: Kislev},
+		HebrewDate{Y: HebrewYear{Y: 5777}, D: 25, M: Kislev},
 		time.Date(2016, time.December, 25, 12, 0, 0, 0, time.Local),
 	}, {
 		// ref: p. 3
-		HebrewDate{Y: HebrewYear{y: 5779}, D: 7, M: Iyar},
+		HebrewDate{Y: HebrewYear{Y: 5779}, D: 7, M: Iyar},
 		time.Date(2019, time.May, 12, 12, 0, 0, 0, time.Local),
 	}, {
 		// ref: p. 3
-		HebrewDate{Y: HebrewYear{y: 5779}, D: 2, M: Nissan},
+		HebrewDate{Y: HebrewYear{Y: 5779}, D: 2, M: Nissan},
 		time.Date(2019, time.April, 7, 12, 0, 0, 0, time.Local),
 	}, {
 		// ref: p. 3
-		HebrewDate{Y: HebrewYear{y: 5780}, D: 1, M: Tishrei},
+		HebrewDate{Y: HebrewYear{Y: 5780}, D: 1, M: Tishrei},
 		time.Date(2019, time.September, 30, 12, 0, 0, 0, time.Local),
 	}, {
-		HebrewDate{Y: HebrewYear{y: 5728}, D: 25, M: Shevat},
+		HebrewDate{Y: HebrewYear{Y: 5728}, D: 25, M: Shevat},
 		time.Date(1968, time.February, 24, 12, 0, 0, 0, time.Local),
+	}, {
+		HebrewDate{Y: HebrewYear{Y: 5750}, D: 29, M: Tevet},
+		time.Date(1990, time.January, 26, 12, 0, 0, 0, time.Local),
+	}, {
+		HebrewDate{Y: HebrewYear{Y: 5750}, D: 30, M: Shevat},
+		time.Date(1990, time.February, 25, 12, 0, 0, 0, time.Local),
+	}, {
+		HebrewDate{Y: HebrewYear{Y: 5750}, D: 1, M: Adar},
+		time.Date(1990, time.February, 26, 12, 0, 0, 0, time.Local),
 	}}
 
 	for _, test := range tests {

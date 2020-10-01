@@ -14,7 +14,7 @@ const (
 )
 
 type HebrewYear struct {
-	y        int // the year
+	Y        int // the year
 	s        quality
 	leapYear bool
 }
@@ -30,14 +30,14 @@ func (h *HebrewYear) Length() int {
 
 // String implements stringer.String.
 func (h HebrewYear) String() string {
-	return fmt.Sprintf("%d", h.y)
+	return fmt.Sprintf("%d", h.Y)
 }
 
 func (h *HebrewYear) monthLength(m HebrewMonth) int {
 	switch m {
 	case Nissan, Sivan, Av, Tishrei, Shevat, Adar_I:
 		return 30
-	case Iyar, Tamuz, Elul, Tevet, Adar_II:
+	case Iyar, Tamuz, Elul, Tevet, Adar_II, Adar:
 		return 29
 	case Marcheshvan:
 		if h.s == 1 { // ref: p. 4
@@ -70,13 +70,16 @@ const (
 	Shevat
 	Adar_I
 	Adar_II
+	Adar
 )
 
 func (m HebrewMonth) num() int {
 	if m < Tishrei {
 		return int(m)
+	} else if m == Adar {
+		return int(Adar_I) - 1
 	}
-	return int(m) - 1
+	return int(m) - 1 // Tishrei and Elul are both height 8
 }
 
 func (m HebrewMonth) String() string {
@@ -91,6 +94,8 @@ func (m HebrewMonth) String() string {
 		return "Tevet"
 	case Shevat:
 		return "Shevat"
+	case Adar:
+		return "Adar"
 	case Adar_I:
 		return "Adar_I"
 	case Adar_II:
@@ -133,5 +138,5 @@ func (h HebrewDate) height() int {
 
 // equals compares two HebrewDates for equality
 func (h HebrewDate) Equals(d HebrewDate) bool {
-	return h.D == d.D && h.M == d.M && h.Y.y == d.Y.y
+	return h.D == d.D && h.M == d.M && h.Y.Y == d.Y.Y
 }
