@@ -120,26 +120,26 @@ func (mm *gmm) monthLength(m time.Month) int {
 }
 
 func (mm *gmm) validate() {
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Printf("%#v\n", mm)
-		}
-	}()
 	// p. 2
 	if mm.it < 12 || mm.it > 44 {
-		panic(fmt.Sprintf("12<=IT<=44: IT==%d", mm.it))
+		fmt.Printf("ERROR: 12<=IT<=44: ")
+		fmt.Printf("RH(%d)==%s: %#v\n", mm.hebrewYears[1].Y, mm.rh.Format("02 January 2006"), mm)
 	}
 	if mm.he < 41 || mm.he > 73 {
-		panic(fmt.Sprintf("41<=HE<=73: HE==%d", mm.he))
+		fmt.Printf("ERROR: 41<=HE<=73: ")
+		fmt.Printf("RH(%d)==%s: %#v\n", mm.hebrewYears[1].Y, mm.rh.Format("02 January 2006"), mm)
 	}
 	if mm.she < 41 || mm.she > 73 {
-		panic(fmt.Sprintf("41<=SHE<=73: SHE==%d", mm.she))
+		fmt.Printf("ERROR: 41<=SHE<=73: ")
+		fmt.Printf("RH(%d)==%s: %#v\n", mm.hebrewYears[1].Y, mm.rh.Format("02 January 2006"), mm)
 	}
 	if mm.it >= mm.she {
-		panic(fmt.Sprintf("IT<SHE: IT==%d SHE==%d", mm.it, mm.she))
+		fmt.Printf("ERROR: IT<SHE: ")
+		fmt.Printf("RH(%d)==%s: %#v\n", mm.hebrewYears[1].Y, mm.rh.Format("02 January 2006"), mm)
 	}
 	if mm.it >= mm.he {
-		panic(fmt.Sprintf("IT<HE: IT==%d HE==%d", mm.it, mm.he))
+		fmt.Printf("ERROR: IT<HE: ")
+		fmt.Printf("RH(%d)==%s: %#v\n", mm.hebrewYears[1].Y, mm.rh.Format("02 January 2006"), mm)
 	}
 }
 
