@@ -112,9 +112,9 @@ func (m HebrewMonth) String() string {
 }
 
 type HebrewDate struct {
-	y HebrewYear
-	d int
-	m HebrewMonth
+	Y HebrewYear
+	D int
+	M HebrewMonth
 }
 
 func NewHebrewDate(t time.Time) HebrewDate {
@@ -123,15 +123,15 @@ func NewHebrewDate(t time.Time) HebrewDate {
 
 // String implements stringer.String.
 func (h HebrewDate) String() string {
-	return fmt.Sprintf("%d %s %s", h.d, h.m, h.y)
+	return fmt.Sprintf("%d %s %s", h.D, h.M, h.Y)
 }
 
 // height gives the "height" of the date, per Conway.
 func (h HebrewDate) height() int {
-	return h.d + int(h.m)
+	return h.D + int(h.M)
 }
 
 // equals compares two HebrewDates for equality
 func (h HebrewDate) Equals(d HebrewDate) bool {
-	return h.d == d.d && h.m == d.m && h.y.y == d.y.y
+	return h.D == d.D && h.M == d.M && h.Y.y == d.Y.y
 }

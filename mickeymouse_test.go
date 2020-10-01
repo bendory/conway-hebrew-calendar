@@ -116,22 +116,22 @@ func TestConversions(t *testing.T) {
 		t  time.Time
 	}{{
 		// ref: p. 1
-		HebrewDate{y: HebrewYear{y: 5777}, d: 25, m: Kislev},
+		HebrewDate{Y: HebrewYear{y: 5777}, D: 25, M: Kislev},
 		time.Date(2016, time.December, 25, 12, 0, 0, 0, time.Local),
 	}, {
 		// ref: p. 3
-		HebrewDate{y: HebrewYear{y: 5779}, d: 7, m: Iyar},
+		HebrewDate{Y: HebrewYear{y: 5779}, D: 7, M: Iyar},
 		time.Date(2019, time.May, 12, 12, 0, 0, 0, time.Local),
 	}, {
 		// ref: p. 3
-		HebrewDate{y: HebrewYear{y: 5779}, d: 2, m: Nissan},
+		HebrewDate{Y: HebrewYear{y: 5779}, D: 2, M: Nissan},
 		time.Date(2019, time.April, 7, 12, 0, 0, 0, time.Local),
 	}, {
 		// ref: p. 3
-		HebrewDate{y: HebrewYear{y: 5780}, d: 1, m: Tishrei},
+		HebrewDate{Y: HebrewYear{y: 5780}, D: 1, M: Tishrei},
 		time.Date(2019, time.September, 30, 12, 0, 0, 0, time.Local),
 	}, {
-		HebrewDate{y: HebrewYear{y: 5728}, d: 25, m: Shevat},
+		HebrewDate{Y: HebrewYear{y: 5728}, D: 25, M: Shevat},
 		time.Date(1968, time.February, 24, 12, 0, 0, 0, time.Local),
 	}}
 

@@ -162,7 +162,7 @@ func ToHebrewDate(t time.Time) HebrewDate {
 	case m < gMM.rh.Month():
 		hMM = hebrewMickeyMouse(gMM.hebrewYears[0].y)
 	default: // m is RH month
-	    switch {
+		switch {
 		case d >= gMM.rh.Day():
 			hMM = hebrewMickeyMouse(gMM.hebrewYears[1].y)
 		default: // d is before RH
@@ -184,20 +184,20 @@ func ToHebrewDate(t time.Time) HebrewDate {
 		hm, heSheIt = hMM.partner(m)
 	}
 	hd := ht - heSheIt
-	return HebrewDate{d: hd, m: hm, y: hMM.y}
+	return HebrewDate{D: hd, M: hm, Y: hMM.y}
 }
 
 func FromHebrewDate(h HebrewDate) time.Time {
-	mm := hebrewMickeyMouse(h.y.y)
-	heSheIt := mm.heSheIt(h.m)
-	ht := h.d + heSheIt
-	gm := time.Month(h.m.num())
+	mm := hebrewMickeyMouse(h.Y.y)
+	heSheIt := mm.heSheIt(h.M)
+	ht := h.D + heSheIt
+	gm := time.Month(h.M.num())
 	gd := ht - int(gm)
 	if gm > time.December {
 		gm -= 12
 	}
 	gy := mm.rh.Year()
-	if h.m <= Elul || gm == time.January {
+	if h.M <= Elul || gm == time.January {
 		gy++
 	}
 	return time.Date(gy, gm, gd, 12, 0, 0, 0, time.Local)

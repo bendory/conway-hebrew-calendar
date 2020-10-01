@@ -11,7 +11,7 @@ import (
 
 func TestHebrew(t *testing.T) {
 	t.Run("format", func(t *testing.T) {
-		hebrew := HebrewDate{y: HebrewYear{y: 5278}, m: Shevat, d: 25}
+		hebrew := HebrewDate{Y: HebrewYear{y: 5278}, M: Shevat, D: 25}
 		if got, want := fmt.Sprintf("%s", hebrew), "25 Shevat 5278"; got != want {
 			t.Errorf("got %q; want %q", got, want)
 		}
