@@ -121,6 +121,9 @@ func (mm *gmm) monthLength(m time.Month) int {
 
 func (mm *gmm) validate() {
 	// p. 2
+	if y := mm.rh.Year(); y < 1582 || y > 2200 {
+		return
+	}
 	if mm.it < 12 || mm.it > 44 {
 		fmt.Printf("ERROR: 12<=IT<=44: ")
 		fmt.Printf("RH(%d)==%s: %#v\n", mm.hebrewYears[1].Y, mm.rh.Format("02 January 2006"), mm)
@@ -193,7 +196,7 @@ func ToHebrewDate(t time.Time) HebrewDate {
 	// Date extends into next month -- shrink...
 	for hd > hMM.y.monthLength(hm) {
 		hd -= hMM.y.monthLength(hm)
-		hm++
+		hm++ // This won't work for Adar or Elul -- but we won't hit this code path in those months!
 	}
 	return HebrewDate{D: hd, M: hm, Y: hMM.y}
 }
