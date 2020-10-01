@@ -109,7 +109,6 @@ func TestHebrewMickeyMouse(t *testing.T) {
 	}
 }
 
-// TODO: add test cases
 func TestConversions(t *testing.T) {
 	tests := []struct {
 		hd HebrewDate

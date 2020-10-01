@@ -5,10 +5,6 @@ import (
 	"testing"
 )
 
-// TODO: add tests for HebrewYear
-// TODO: add tests for monthLength
-// TODO: add a few simple tests for height()
-
 func TestHebrew(t *testing.T) {
 	t.Run("format", func(t *testing.T) {
 		hebrew := HebrewDate{Y: HebrewYear{Y: 5278}, M: Shevat, D: 25}
