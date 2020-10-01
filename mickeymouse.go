@@ -156,22 +156,27 @@ func ToHebrewDate(t time.Time) HebrewDate {
 	gMM := gregorianMickeyMouse(y)
 
 	var hMM hmm
+	var preferedAugustPartner HebrewMonth
 	switch {
 	case m > gMM.rh.Month():
 		hMM = hebrewMickeyMouse(gMM.hebrewYears[1].Y)
+		preferedAugustPartner = Tishrei
 	case m < gMM.rh.Month():
 		hMM = hebrewMickeyMouse(gMM.hebrewYears[0].Y)
+		preferedAugustPartner = Elul
 	default: // m is RH month
 		switch {
 		case d >= gMM.rh.Day():
 			hMM = hebrewMickeyMouse(gMM.hebrewYears[1].Y)
+			preferedAugustPartner = Tishrei
 		default: // d is before RH
 			hMM = hebrewMickeyMouse(gMM.hebrewYears[0].Y)
+			preferedAugustPartner = Elul
 		}
 	}
 
 	ht := gMM.height(d, m)
-	hm, heSheIt := hMM.partner(m)
+	hm, heSheIt := hMM.partner(m, preferedAugustPartner)
 
 	// If height < heSheIt, then stretch...
 	for heSheIt >= ht { // ref: p. 3
@@ -181,7 +186,7 @@ func ToHebrewDate(t time.Time) HebrewDate {
 		}
 		d += gMM.monthLength(m)
 		ht = gMM.height(d, m)
-		hm, heSheIt = hMM.partner(m)
+		hm, heSheIt = hMM.partner(m, preferedAugustPartner)
 	}
 	hd := ht - heSheIt
 
@@ -266,13 +271,17 @@ func (mm *hmm) validate() {
 
 // partner converts a time.Month to its partner HebrewMonth and heSheIt value;
 // ref: p. 2.
-func (mm *hmm) partner(m time.Month) (HebrewMonth, int) {
+func (mm *hmm) partner(m time.Month, preferedAugustPartner HebrewMonth) (HebrewMonth, int) {
 	switch m {
 	case time.August:
-		return Tishrei, mm.he
-		// Note: Elul, mm.it is an alternative partner for August. It doesn't
-		// actually matter because it+29 = he, so that stretches the Elul date
-		// into Tishrei or vice versa.
+		// Elul, mm.it and Tishrei, mm.he are both partners for August. While
+		// it+29 = he, it is for this year and he is for next year -- so our
+		// caller, who knows which year we are in (by knowing if we are before
+		// or after RH) tells us which is prefered .
+		if preferedAugustPartner == Tishrei {
+			return Tishrei, mm.he
+		}
+		return Elul, mm.it
 	case time.September:
 		return Marcheshvan, mm.he
 	case time.October:
