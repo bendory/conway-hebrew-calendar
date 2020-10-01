@@ -184,6 +184,12 @@ func ToHebrewDate(t time.Time) HebrewDate {
 		hm, heSheIt = hMM.partner(m)
 	}
 	hd := ht - heSheIt
+
+	// Date extends into next month -- shrink...
+	for hd > hMM.y.monthLength(hm) {
+		hd -= hMM.y.monthLength(hm)
+		hm++
+	}
 	return HebrewDate{D: hd, M: hm, Y: hMM.y}
 }
 
