@@ -148,6 +148,18 @@ func TestConversions(t *testing.T) {
 	}, {
 		HebrewDate{Y: HebrewYear{Y: 5750}, D: 29, M: Elul},
 		time.Date(1990, time.September, 19, 12, 0, 0, 0, time.Local),
+	}, {
+		HebrewDate{Y: HebrewYear{Y: 5785}, D: 30, M: Shevat},
+		time.Date(2025, time.February, 28, 12, 0, 0, 0, time.Local),
+	}, {
+		HebrewDate{Y: HebrewYear{Y: 5790}, D: 1, M: Shevat},
+		time.Date(2030, time.January, 5, 12, 0, 0, 0, time.Local),
+	}, {
+		HebrewDate{Y: HebrewYear{Y: 5790}, D: 1, M: Adar_II},
+		time.Date(2030, time.March, 6, 12, 0, 0, 0, time.Local),
+	}, {
+		HebrewDate{Y: HebrewYear{Y: 5784}, D: 29, M: Adar_II},
+		time.Date(2024, time.April, 8, 12, 0, 0, 0, time.Local),
 	}}
 
 	for _, test := range tests {

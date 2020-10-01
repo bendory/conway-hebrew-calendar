@@ -203,7 +203,7 @@ func FromHebrewDate(h HebrewDate) time.Time {
 		gm -= 12
 	}
 	gy := mm.rh.Year()
-	if h.M <= Elul || gm == time.January {
+	if h.M <= Elul || h.M > Shevat || gm == time.January {
 		gy++
 	}
 	return time.Date(gy, gm, gd, 12, 0, 0, 0, time.Local)
