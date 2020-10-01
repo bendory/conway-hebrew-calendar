@@ -124,7 +124,7 @@ func (h HebrewDate) String() string {
 	return fmt.Sprintf("%d %s %s", h.D, h.M, h.Y)
 }
 
-// equals compares two HebrewDates for equality
-func (h HebrewDate) Equals(d HebrewDate) bool {
+// Equal compares two HebrewDates for equality
+func (h HebrewDate) Equal(d HebrewDate) bool {
 	return h.D == d.D && h.M == d.M && h.Y.Y == d.Y.Y
 }

@@ -170,7 +170,7 @@ func TestConversions(t *testing.T) {
 	for _, test := range tests {
 		t.Run(fmt.Sprintf("%v==%v", test.hd, dmy(test.t)), func(t *testing.T) {
 			t.Run("ToHebrewDate", func(t *testing.T) {
-				if got, want := ToHebrewDate(test.t), test.hd; !got.Equals(want) {
+				if got, want := ToHebrewDate(test.t), test.hd; !got.Equal(want) {
 					t.Errorf("got %v, want %v", got, want)
 				}
 			})
