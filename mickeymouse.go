@@ -55,20 +55,17 @@ func gregorianMickeyMouse(year int) gmm {
 	case year >= 2900 && year < 3000:
 		b = 13.0
 	default:
-		// TODO: expand valid years.
 		panic(fmt.Sprintf("Rosh Hashannah can only be calculated for 1100-2999, not %d.", year))
 	}
 	b += float64(year%4) / 4.0 // adjust "bissextile" time for Roman leap year
 
 	y := year - 1900
-	g := year%19 + 1
-	f := (12 * g) % 19
+	f := (12 * (year%19+1)) % 19
 
 	a := 1.5 * float64(f) // "acrobatic" term jumps from 0-27; how far RH falls from earliest possible RH
-	c := f + 1
 	d := float64(2*y-1) / 35.0
-	e := float64(f+1) / 760.0 // can be ignored for 1762-2168
-	dayFloat := a + b + (float64(c)-d)/18.0 - e
+	e := float64(f+1) / 760.0 // optionally ignore for 1762-2168
+	dayFloat := a + b + (float64(f+1)-d)/18.0 - e
 	day := int(dayFloat) // truncate, don't round! per david.slusky@ku.edu via email.
 
 	// Now mark leap years.
