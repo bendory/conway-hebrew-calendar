@@ -26,6 +26,12 @@ func gregorianMickeyMouse(year int) gmm {
 	var b float64 // "bissextile" time; earliest possible RH
 	switch {
 	// b adjusts by centuries; ref: p. 8
+	case year >= 1100 && year < 1300:
+		b = 0.0
+	case year >= 1300 && year < 1400:
+		b = 1.0
+	case year >= 1400 && year < 1500:
+		b = 2.0
 	case year >= 1500 && year < 1700:
 		b = 3.0 // Earliest possible RH ~Sept 3
 	case year >= 1700 && year < 1800:
@@ -38,11 +44,19 @@ func gregorianMickeyMouse(year int) gmm {
 		b = 7.0
 	case year >= 2200 && year < 2300:
 		b = 8.0
-	case year >= 2300 && year < 2400:
+	case year >= 2300 && year < 2500:
 		b = 9.0
+	case year >= 2500 && year < 2600:
+		b = 10.0
+	case year >= 2600 && year < 2700:
+		b = 11.0
+	case year >= 2700 && year < 2900:
+		b = 12.0
+	case year >= 2900 && year < 3000:
+		b = 13.0
 	default:
 		// TODO: expand valid years.
-		panic(fmt.Sprintf("Rosh Hashannah can only be calculated for 1500-2400, not %d.", year))
+		panic(fmt.Sprintf("Rosh Hashannah can only be calculated for 1100-2999, not %d.", year))
 	}
 	b += float64(year%4) / 4.0 // adjust "bissextile" time for Roman leap year
 
