@@ -35,6 +35,7 @@ func TestRoshHashannah(t *testing.T) {
 		{9, 14, 2034, 5795},
 		{10, 4, 2035, 5796},
 		{9, 22, 2036, 5797},
+		{9, 5, 1899, 5660}, // Random year that gave me problems when I was playing.
 	}
 	for _, test := range tests {
 		t.Run(fmt.Sprintf("%d-%d", test.y, test.hebrewYear), func(t *testing.T) {
