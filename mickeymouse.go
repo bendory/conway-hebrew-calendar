@@ -22,35 +22,40 @@ func gregorianMickeyMouse(year int) gmm {
 		hebrewYears: [2]HebrewYear{HebrewYear{Y: year + 3760}, HebrewYear{Y: year + 3761}},
 	}
 
-	// First compute the Roman date of RH; ref: p. 5.
-	// Note that roshHashnnah computes a Gregorian September RH date, which may
-	// be a squashed or stretched real date. The September date is needed to
-	// compute IT.
-	var b float64 // "bissextile" factor is earliest possible RH as a September date
+	var (
+		dayFloat float64
+		day      int
+	)
 	{
-		y := year/100 - 11 // year is an int, so this is a floor
-		mod := y%4 - 1
-		if mod < 0 {
-			mod = 0
+		// First compute the Roman date of RH; ref: p. 5.
+		// Note that roshHashnnah computes a Gregorian September RH date, which may
+		// be a squashed or stretched real date. The September date is needed to
+		// compute IT.
+		var b float64 // "bissextile" factor is earliest possible RH as a September date
+		{
+			y := year/100 - 11 // year is an int, so this is a floor
+			mod := y%4 - 1
+			if mod < 0 {
+				mod = 0
+			}
+			b = float64(y/4*3 + mod) // y is an int, so y/4 is a floor
 		}
-		b = float64(y/4*3 + mod) // y is an int, so y/4 is a floor
+
+		b += float64(year%4) / 4.0 // adjust "bissextile" time for Roman leap year
+		y := year - 1900
+		f := (12 * (year%19 + 1)) % 19
+
+		a := 1.5 * float64(f) // "acrobatic" term jumps from 0-27; how far RH falls from earliest possible RH
+		d := float64(2*y-1) / 35.0
+		e := float64(f+1) / 760.0 // optionally ignore for 1762-2168
+		dayFloat = a + b + (float64(f+1)-d)/18.0 - e
+		day = int(dayFloat) // truncate, don't round! per david.slusky@ku.edu via email.
+
+		// Now mark leap years.
+		mm.gregorianLeapYear = year%4 == 0 && (year%100 != 0 || year%400 == 0)
+		mm.hebrewYears[0].leapYear = 12 <= f && f <= 18
+		mm.hebrewYears[1].leapYear = f <= 6
 	}
-
-	b += float64(year%4) / 4.0 // adjust "bissextile" time for Roman leap year
-
-	y := year - 1900
-	f := (12 * (year%19 + 1)) % 19
-
-	a := 1.5 * float64(f) // "acrobatic" term jumps from 0-27; how far RH falls from earliest possible RH
-	d := float64(2*y-1) / 35.0
-	e := float64(f+1) / 760.0 // optionally ignore for 1762-2168
-	dayFloat := a + b + (float64(f+1)-d)/18.0 - e
-	day := int(dayFloat) // truncate, don't round! per david.slusky@ku.edu via email.
-
-	// Now mark leap years.
-	mm.gregorianLeapYear = year%4 == 0 && (year%100 != 0 || year%400 == 0)
-	mm.hebrewYears[0].leapYear = 12 <= f && f <= 18
-	mm.hebrewYears[1].leapYear = f <= 6
 
 	// We now know rh... unless rh must be postponed...
 	mm.rh = time.Date(year, time.September, day, 12, 0, 0, 0, time.Local)
