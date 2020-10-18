@@ -1,55 +1,71 @@
 package conway
 
-import "fmt"
-
-type quality int
-
-const (
-	abundant  = 1
-	regular   = 0
-	deficient = -1
+import (
+	"fmt"
+	"time"
 )
 
-type hebrewYear struct {
-	y        int // the year
-	s        quality
-	leapYear bool
-}
+func ToHebrewDate(t time.Time) HebrewDate {
+	y, m, d := t.Date()
+	gMM := gregorianMickeyMouse(y)
 
-// length() isn't used anywhere; perhaps expose a Hebrew Year .Length() API?
-func (h *hebrewYear) length() int {
-	// ref: p. 4
-	days := 354 + int(h.s)
-	if h.leapYear {
-		days += 30
-	}
-	return days
-}
-
-// String implements stringer.String.
-func (h hebrewYear) String() string {
-	return fmt.Sprintf("%d", h.y)
-}
-
-func (h *hebrewYear) monthLength(m HebrewMonth) int {
-	switch m {
-	case Nissan, Sivan, Av, Tishrei, Shevat, Adar_I:
-		return 30
-	case Iyar, Tamuz, Elul, Tevet, Adar_II, Adar:
-		return 29
-	case Marcheshvan:
-		if h.s == 1 { // ref: p. 4
-			return 30
+	var hMM hmm
+	var preferedAugustPartner HebrewMonth
+	switch {
+	case m > gMM.rh.Month():
+		hMM = hebrewMickeyMouse(gMM.hebrewYears[1].y)
+		preferedAugustPartner = Tishrei
+	case m < gMM.rh.Month():
+		hMM = hebrewMickeyMouse(gMM.hebrewYears[0].y)
+		preferedAugustPartner = Elul
+	default: // m is RH month
+		switch {
+		case d >= gMM.rh.Day():
+			hMM = hebrewMickeyMouse(gMM.hebrewYears[1].y)
+			preferedAugustPartner = Tishrei
+		default: // d is before RH
+			hMM = hebrewMickeyMouse(gMM.hebrewYears[0].y)
+			preferedAugustPartner = Elul
 		}
-		return 29
-	case Kislev:
-		if h.s == -1 { // ref: p. 4
-			return 29
-		}
-		return 30
-	default:
-		panic(fmt.Sprint("Invalid month:", m))
 	}
+
+	ht := gMM.height(d, m)
+	hm, heSheIt := hMM.partner(m, preferedAugustPartner)
+
+	// If height < heSheIt, then stretch...
+	for heSheIt >= ht { // ref: p. 3
+		m--
+		if m < time.January {
+			m = time.December
+		}
+		d += gMM.monthLength(m)
+		ht = gMM.height(d, m)
+		hm, heSheIt = hMM.partner(m, preferedAugustPartner)
+	}
+	hd := ht - heSheIt
+
+	// Date extends into next month -- shrink...
+	for hd > hMM.y.monthLength(hm) {
+		hd -= hMM.y.monthLength(hm)
+		hm++ // This won't work for Adar or Elul -- but we won't hit this code path in those months!
+	}
+	return HebrewDate{D: hd, M: hm, Y: hMM.y.y}
+}
+
+func FromHebrewDate(h HebrewDate) time.Time {
+	mm := hebrewMickeyMouse(h.Y)
+	heSheIt := mm.heSheIt(h.M)
+	ht := h.D + heSheIt
+	gm := time.Month(h.M.num())
+	gd := ht - int(gm)
+	if gm > time.December {
+		gm -= 12
+	}
+	gy := mm.rh.Year()
+	if h.M <= Elul || h.M > Shevat || gm == time.January {
+		gy++
+	}
+	return time.Date(gy, gm, gd, 12, 0, 0, 0, time.Local)
 }
 
 type HebrewMonth int
@@ -118,12 +134,6 @@ type HebrewDate struct {
 	Y int
 	D int
 	M HebrewMonth
-}
-
-type hebrewDate struct {
-	y hebrewYear
-	d int
-	m HebrewMonth
 }
 
 // String implements stringer.String.
