@@ -10,13 +10,14 @@ const (
 	deficient = -1
 )
 
-type HebrewYear struct {
-	Y        int // the year
+type hebrewYear struct {
+	y        int // the year
 	s        quality
 	leapYear bool
 }
 
-func (h *HebrewYear) Length() int {
+// length() isn't used anywhere; perhaps expose a Hebrew Year .Length() API?
+func (h *hebrewYear) length() int {
 	// ref: p. 4
 	days := 354 + int(h.s)
 	if h.leapYear {
@@ -26,11 +27,11 @@ func (h *HebrewYear) Length() int {
 }
 
 // String implements stringer.String.
-func (h HebrewYear) String() string {
-	return fmt.Sprintf("%d", h.Y)
+func (h hebrewYear) String() string {
+	return fmt.Sprintf("%d", h.y)
 }
 
-func (h *HebrewYear) monthLength(m HebrewMonth) int {
+func (h *hebrewYear) monthLength(m HebrewMonth) int {
 	switch m {
 	case Nissan, Sivan, Av, Tishrei, Shevat, Adar_I:
 		return 30
@@ -114,17 +115,23 @@ func (m HebrewMonth) String() string {
 }
 
 type HebrewDate struct {
-	Y HebrewYear
+	Y int
 	D int
 	M HebrewMonth
 }
 
+type hebrewDate struct {
+	y hebrewYear
+	d int
+	m HebrewMonth
+}
+
 // String implements stringer.String.
 func (h HebrewDate) String() string {
-	return fmt.Sprintf("%d %s %s", h.D, h.M, h.Y)
+	return fmt.Sprintf("%d %s %d", h.D, h.M, h.Y)
 }
 
 // Equal compares two HebrewDates for equality
 func (h HebrewDate) Equal(d HebrewDate) bool {
-	return h.D == d.D && h.M == d.M && h.Y.Y == d.Y.Y
+	return h.D == d.D && h.M == d.M && h.Y == d.Y
 }

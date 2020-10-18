@@ -10,7 +10,7 @@ import (
 type gmm struct {
 	he, she, it       int
 	rh                time.Time // Gregorian date of Rosh Hashannah
-	hebrewYears       [2]HebrewYear
+	hebrewYears       [2]hebrewYear
 	gregorianLeapYear bool
 }
 
@@ -19,7 +19,7 @@ func gregorianMickeyMouse(year int) gmm {
 		panic("Can't go prior to millenium.")
 	}
 	mm := gmm{
-		hebrewYears: [2]HebrewYear{HebrewYear{Y: year + 3760}, HebrewYear{Y: year + 3761}},
+		hebrewYears: [2]hebrewYear{hebrewYear{y: year + 3760}, hebrewYear{y: year + 3761}},
 	}
 
 	var (
@@ -121,25 +121,25 @@ func (mm *gmm) validate() {
 	}
 	if mm.it < 12 || mm.it > 44 {
 		fmt.Printf("ERROR: 12<=IT<=44: ")
-		fmt.Printf("RH(%d)==%s: %#v\n", mm.hebrewYears[1].Y, mm.rh.Format("02 January 2006"), mm)
+		fmt.Printf("RH(%d)==%s: %#v\n", mm.hebrewYears[1].y, mm.rh.Format("02 January 2006"), mm)
 	}
 	if mm.he < 41 || mm.he > 73 {
 		fmt.Printf("ERROR: 41<=HE<=73: ")
-		fmt.Printf("RH(%d)==%s: %#v\n", mm.hebrewYears[1].Y, mm.rh.Format("02 January 2006"), mm)
+		fmt.Printf("RH(%d)==%s: %#v\n", mm.hebrewYears[1].y, mm.rh.Format("02 January 2006"), mm)
 	}
 	if mm.she == 74 && mm.rh.Year() == 2196 {
 		// This is the one exception -- SHE creeps up to 74 i 2196.
 	} else if mm.she < 41 || mm.she > 73 {
 		fmt.Printf("ERROR: 41<=SHE<=73: ")
-		fmt.Printf("RH(%d)==%s: %#v\n", mm.hebrewYears[1].Y, mm.rh.Format("02 January 2006"), mm)
+		fmt.Printf("RH(%d)==%s: %#v\n", mm.hebrewYears[1].y, mm.rh.Format("02 January 2006"), mm)
 	}
 	if mm.it >= mm.she {
 		fmt.Printf("ERROR: IT<SHE: ")
-		fmt.Printf("RH(%d)==%s: %#v\n", mm.hebrewYears[1].Y, mm.rh.Format("02 January 2006"), mm)
+		fmt.Printf("RH(%d)==%s: %#v\n", mm.hebrewYears[1].y, mm.rh.Format("02 January 2006"), mm)
 	}
 	if mm.it >= mm.he {
 		fmt.Printf("ERROR: IT<HE: ")
-		fmt.Printf("RH(%d)==%s: %#v\n", mm.hebrewYears[1].Y, mm.rh.Format("02 January 2006"), mm)
+		fmt.Printf("RH(%d)==%s: %#v\n", mm.hebrewYears[1].y, mm.rh.Format("02 January 2006"), mm)
 	}
 }
 
@@ -159,18 +159,18 @@ func ToHebrewDate(t time.Time) HebrewDate {
 	var preferedAugustPartner HebrewMonth
 	switch {
 	case m > gMM.rh.Month():
-		hMM = hebrewMickeyMouse(gMM.hebrewYears[1].Y)
+		hMM = hebrewMickeyMouse(gMM.hebrewYears[1].y)
 		preferedAugustPartner = Tishrei
 	case m < gMM.rh.Month():
-		hMM = hebrewMickeyMouse(gMM.hebrewYears[0].Y)
+		hMM = hebrewMickeyMouse(gMM.hebrewYears[0].y)
 		preferedAugustPartner = Elul
 	default: // m is RH month
 		switch {
 		case d >= gMM.rh.Day():
-			hMM = hebrewMickeyMouse(gMM.hebrewYears[1].Y)
+			hMM = hebrewMickeyMouse(gMM.hebrewYears[1].y)
 			preferedAugustPartner = Tishrei
 		default: // d is before RH
-			hMM = hebrewMickeyMouse(gMM.hebrewYears[0].Y)
+			hMM = hebrewMickeyMouse(gMM.hebrewYears[0].y)
 			preferedAugustPartner = Elul
 		}
 	}
@@ -195,11 +195,11 @@ func ToHebrewDate(t time.Time) HebrewDate {
 		hd -= hMM.y.monthLength(hm)
 		hm++ // This won't work for Adar or Elul -- but we won't hit this code path in those months!
 	}
-	return HebrewDate{D: hd, M: hm, Y: hMM.y}
+	return HebrewDate{D: hd, M: hm, Y: hMM.y.y}
 }
 
 func FromHebrewDate(h HebrewDate) time.Time {
-	mm := hebrewMickeyMouse(h.Y.Y)
+	mm := hebrewMickeyMouse(h.Y)
 	heSheIt := mm.heSheIt(h.M)
 	ht := h.D + heSheIt
 	gm := time.Month(h.M.num())
@@ -218,15 +218,15 @@ func FromHebrewDate(h HebrewDate) time.Time {
 type hmm struct {
 	he, she, it int
 	rh          time.Time // Gregorian date of Rosh Hashannah
-	y           HebrewYear
+	y           hebrewYear
 }
 
 func hebrewMickeyMouse(year int) hmm {
 	gregorianRHyear := year - 3761
 	thisGmm := gregorianMickeyMouse(gregorianRHyear)
 	nextGmm := gregorianMickeyMouse(gregorianRHyear + 1)
-	if thisGmm.hebrewYears[1].Y != nextGmm.hebrewYears[0].Y {
-		panic(fmt.Sprintf("Hebrew year mismatch: %d != %d", thisGmm.hebrewYears[1].Y, nextGmm.hebrewYears[0].Y))
+	if thisGmm.hebrewYears[1].y != nextGmm.hebrewYears[0].y {
+		panic(fmt.Sprintf("Hebrew year mismatch: %d != %d", thisGmm.hebrewYears[1].y, nextGmm.hebrewYears[0].y))
 	}
 	if thisGmm.hebrewYears[1].leapYear != nextGmm.hebrewYears[0].leapYear {
 		panic(fmt.Sprintf("Hebrew leapYear mismatch: %t != %t", thisGmm.hebrewYears[1].leapYear, nextGmm.hebrewYears[0].leapYear))
@@ -236,8 +236,8 @@ func hebrewMickeyMouse(year int) hmm {
 		she: nextGmm.she,
 		it:  nextGmm.it,
 		rh:  thisGmm.rh,
-		y: HebrewYear{
-			Y:        year,
+		y: hebrewYear{
+			y:        year,
 			leapYear: thisGmm.hebrewYears[1].leapYear,
 			s:        quality(nextGmm.she - thisGmm.he),
 		},
