@@ -16,7 +16,7 @@ type gmm struct {
 
 func gregorianMickeyMouse(year int) gmm {
 	if year < 1 {
-		panic("Can't go prior to millenium.")
+		panic("Can't go prior to 1 BCE.")
 	}
 	mm := gmm{
 		hebrewYears: [2]hebrewYear{hebrewYear{y: year + 3760}, hebrewYear{y: year + 3761}},
@@ -42,11 +42,10 @@ func gregorianMickeyMouse(year int) gmm {
 		}
 
 		b += float64(year%4) / 4.0 // adjust "bissextile" time for Roman leap year
-		y := year - 1900
 		f := (12 * (year%19 + 1)) % 19
 
 		a := 1.5 * float64(f) // "acrobatic" term jumps from 0-27; how far RH falls from earliest possible RH
-		d := float64(2*y-1) / 35.0
+		d := float64(2*(year-1900)-1) / 35.0
 		e := float64(f+1) / 760.0 // optionally ignore for 1762-2168
 		dayFloat = a + b + (float64(f+1)-d)/18.0 - e
 		day = int(dayFloat) // truncate, don't round! per david.slusky@ku.edu via email.
@@ -78,14 +77,9 @@ func gregorianMickeyMouse(year int) gmm {
 		}
 	}
 
-	// IT is the day of RH as a September date + 9; ref: p. 3
-	mm.it = day + 9
-
-	// HE; ref: p. 3
-	mm.he = mm.it + 29
-
-	// SHE; ref: p. 3
-	mm.she = mm.it + 10
+	mm.it = day + 9 // IT is the day of RH as a September date + 9; ref: p. 3
+	mm.he = mm.it + 29 // HE; ref: p. 3
+	mm.she = mm.it + 10 // SHE; ref: p. 3
 	if mm.gregorianLeapYear {
 		mm.she++
 	}
@@ -132,12 +126,6 @@ func hebrewMickeyMouse(year int) hmm {
 	gregorianRHyear := year - 3761
 	thisGmm := gregorianMickeyMouse(gregorianRHyear)
 	nextGmm := gregorianMickeyMouse(gregorianRHyear + 1)
-	if thisGmm.hebrewYears[1].y != nextGmm.hebrewYears[0].y {
-		panic(fmt.Sprintf("Hebrew year mismatch: %d != %d", thisGmm.hebrewYears[1].y, nextGmm.hebrewYears[0].y))
-	}
-	if thisGmm.hebrewYears[1].leapYear != nextGmm.hebrewYears[0].leapYear {
-		panic(fmt.Sprintf("Hebrew leapYear mismatch: %t != %t", thisGmm.hebrewYears[1].leapYear, nextGmm.hebrewYears[0].leapYear))
-	}
 	mm := hmm{
 		he:  thisGmm.he,
 		she: nextGmm.she,
@@ -175,7 +163,7 @@ func (mm *hmm) partner(m time.Month, preferedAugustPartner HebrewMonth) (HebrewM
 		// Elul, mm.it and Tishrei, mm.he are both partners for August. While
 		// it+29 = he, it is for this year and he is for next year -- so our
 		// caller, who knows which year we are in (by knowing if we are before
-		// or after RH) tells us which is prefered .
+		// or after RH) tells us which is prefered.
 		if preferedAugustPartner == Tishrei {
 			return Tishrei, mm.he
 		}
