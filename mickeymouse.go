@@ -15,52 +15,31 @@ type gmm struct {
 }
 
 func gregorianMickeyMouse(year int) gmm {
+	if year < 1 {
+		panic("Can't go prior to millenium.")
+	}
 	mm := gmm{
 		hebrewYears: [2]HebrewYear{HebrewYear{Y: year + 3760}, HebrewYear{Y: year + 3761}},
 	}
 
 	// First compute the Roman date of RH; ref: p. 5.
-	// Note that roshHashnnah computes an un-squashed Gregorian date, thereby
-	// considering RH as a September date, which is what is needed to compute
-	// IT.
-	var b float64 // "bissextile" time; earliest possible RH
-	switch {
-	// b adjusts by centuries; ref: p. 8
-	case year >= 1100 && year < 1300:
-		b = 0.0
-	case year >= 1300 && year < 1400:
-		b = 1.0
-	case year >= 1400 && year < 1500:
-		b = 2.0
-	case year >= 1500 && year < 1700:
-		b = 3.0 // Earliest possible RH ~Sept 3
-	case year >= 1700 && year < 1800:
-		b = 4.0 // ~Sept 4
-	case year >= 1800 && year < 1900:
-		b = 5.0
-	case year >= 1900 && year < 2100:
-		b = 6.0
-	case year >= 2100 && year < 2200:
-		b = 7.0
-	case year >= 2200 && year < 2300:
-		b = 8.0
-	case year >= 2300 && year < 2500:
-		b = 9.0
-	case year >= 2500 && year < 2600:
-		b = 10.0
-	case year >= 2600 && year < 2700:
-		b = 11.0
-	case year >= 2700 && year < 2900:
-		b = 12.0
-	case year >= 2900 && year < 3000:
-		b = 13.0
-	default:
-		panic(fmt.Sprintf("Rosh Hashannah can only be calculated for 1100-2999, not %d.", year))
+	// Note that roshHashnnah computes a Gregorian September RH date, which may
+	// be a squashed or stretched real date. The September date is needed to
+	// compute IT.
+	var b float64 // "bissextile" factor is earliest possible RH as a September date
+	{
+		y := year/100 - 11 // year is an int, so this is a floor
+		mod := y%4 - 1
+		if mod < 0 {
+			mod = 0
+		}
+		b = float64(y/4*3 + mod) // y is an int, so y/4 is a floor
 	}
+
 	b += float64(year%4) / 4.0 // adjust "bissextile" time for Roman leap year
 
 	y := year - 1900
-	f := (12 * (year%19+1)) % 19
+	f := (12 * (year%19 + 1)) % 19
 
 	a := 1.5 * float64(f) // "acrobatic" term jumps from 0-27; how far RH falls from earliest possible RH
 	d := float64(2*y-1) / 35.0
