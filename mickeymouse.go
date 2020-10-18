@@ -77,8 +77,8 @@ func gregorianMickeyMouse(year int) gmm {
 		}
 	}
 
-	mm.it = day + 9 // IT is the day of RH as a September date + 9; ref: p. 3
-	mm.he = mm.it + 29 // HE; ref: p. 3
+	mm.it = day + 9     // IT is the day of RH as a September date + 9; ref: p. 3
+	mm.he = mm.it + 29  // HE; ref: p. 3
 	mm.she = mm.it + 10 // SHE; ref: p. 3
 	if mm.gregorianLeapYear {
 		mm.she++
