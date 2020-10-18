@@ -94,7 +94,6 @@ func gregorianMickeyMouse(year int) gmm {
 		mm.she += 30
 	}
 
-	mm.validate()
 	return mm
 }
 
@@ -111,35 +110,6 @@ func (mm *gmm) monthLength(m time.Month) int {
 		return 28
 	default:
 		panic(fmt.Sprint("Unknown month:", m))
-	}
-}
-
-func (mm *gmm) validate() {
-	// p. 2
-	if y := mm.rh.Year(); y < 1582 || y > 2200 {
-		return
-	}
-	if mm.it < 12 || mm.it > 44 {
-		fmt.Printf("ERROR: 12<=IT<=44: ")
-		fmt.Printf("RH(%d)==%s: %#v\n", mm.hebrewYears[1].y, mm.rh.Format("02 January 2006"), mm)
-	}
-	if mm.he < 41 || mm.he > 73 {
-		fmt.Printf("ERROR: 41<=HE<=73: ")
-		fmt.Printf("RH(%d)==%s: %#v\n", mm.hebrewYears[1].y, mm.rh.Format("02 January 2006"), mm)
-	}
-	if mm.she == 74 && mm.rh.Year() == 2196 {
-		// This is the one exception -- SHE creeps up to 74 i 2196.
-	} else if mm.she < 41 || mm.she > 73 {
-		fmt.Printf("ERROR: 41<=SHE<=73: ")
-		fmt.Printf("RH(%d)==%s: %#v\n", mm.hebrewYears[1].y, mm.rh.Format("02 January 2006"), mm)
-	}
-	if mm.it >= mm.she {
-		fmt.Printf("ERROR: IT<SHE: ")
-		fmt.Printf("RH(%d)==%s: %#v\n", mm.hebrewYears[1].y, mm.rh.Format("02 January 2006"), mm)
-	}
-	if mm.it >= mm.he {
-		fmt.Printf("ERROR: IT<HE: ")
-		fmt.Printf("RH(%d)==%s: %#v\n", mm.hebrewYears[1].y, mm.rh.Format("02 January 2006"), mm)
 	}
 }
 
@@ -242,7 +212,6 @@ func hebrewMickeyMouse(year int) hmm {
 			s:        quality(nextGmm.she - thisGmm.he),
 		},
 	}
-	mm.validate()
 	return mm
 }
 
@@ -258,14 +227,6 @@ func (mm *hmm) heSheIt(m HebrewMonth) int {
 		return mm.it
 	default:
 		panic(fmt.Sprintf("Unknown month: %v", m))
-	}
-}
-
-func (mm *hmm) validate() {
-	switch mm.y.s {
-	case abundant, regular, deficient:
-	default:
-		panic(fmt.Sprintf("s = %d!?", mm.y.s))
 	}
 }
 
