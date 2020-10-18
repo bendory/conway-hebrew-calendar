@@ -12,21 +12,14 @@ func ToHebrewDate(t time.Time) HebrewDate {
 	var hMM hmm
 	var preferedAugustPartner HebrewMonth
 	switch {
-	case m > gMM.rh.Month():
+	// Date is RH or later.
+	case m > gMM.rh.Month(), m == gMM.rh.Month() && d >= gMM.rh.Day():
 		hMM = hebrewMickeyMouse(gMM.hebrewYears[1].y)
 		preferedAugustPartner = Tishrei
-	case m < gMM.rh.Month():
+	// Date is before RH.
+	default:
 		hMM = hebrewMickeyMouse(gMM.hebrewYears[0].y)
 		preferedAugustPartner = Elul
-	default: // m is RH month
-		switch {
-		case d >= gMM.rh.Day():
-			hMM = hebrewMickeyMouse(gMM.hebrewYears[1].y)
-			preferedAugustPartner = Tishrei
-		default: // d is before RH
-			hMM = hebrewMickeyMouse(gMM.hebrewYears[0].y)
-			preferedAugustPartner = Elul
-		}
 	}
 
 	ht := gMM.height(d, m)
