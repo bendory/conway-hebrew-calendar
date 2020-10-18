@@ -19,7 +19,7 @@ the paper.
 
 1. On p. 3, when calculating the date of Rosh Hashannah, _truncate_, don't
    round.  This seems to contradict the paper which states that Sept 29.5 -->
-   Sept 30, but author David Slusky told me to round and empirical evidence is
-   that rounding works.
+   Sept 30, but author David Slusky told me to truncate and empirical evidence
+   is that truncating works.
 1. On p. 3, when calculating `SHE`, use `4` in the tens digit if the _outgoing_
    year was a leap year.
