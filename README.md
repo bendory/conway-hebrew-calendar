@@ -1,5 +1,7 @@
 # conway-hebrew-calendar
-An implementation of Professor John H. Conway's Hebrew Calendar algorithm
+An implementation of Professor John H. Conway's Hebrew Calendar algorithm.
+
+I've tested this implementation for dates from 1 CE - 3000 CE and proven correctness.
 
 ## Background
 
