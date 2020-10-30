@@ -9,12 +9,12 @@ comparing to the Hebrew calendar behind http://www.hebcal.com/. Note that:
    calendar](https://en.wikipedia.org/wiki/Proleptic_Gregorian_calendar). This
    implementation is in Golang, and my understanding of Go's
    [time.Time](https://golang.org/src/time/time.go?s=6278:7279#L117) is that it
-   similarly uses the proleptic Gregorian calendar.
+   similarly uses a proleptic Gregorian calendar.
 *  Some time between 70 and 1178 CE, the observation-based Hebrew calendar was
    replaced by [the calculated calendar developed by Hillel
    HaNasi](https://en.wikipedia.org/wiki/Hillel_II#Fixing_of_the_calendar). So
-   this implementation effectively projects a proleptic calculated Hillel Hebrew
-   calendar (a term that I just made up) ont the proleptic Gregorian calendar.
+   this implementation projects a proleptic calculated Hillel Hebrew calendar
+   (a term that I just made up) onto a proleptic Gregorian calendar.
 
 ## Background
 
