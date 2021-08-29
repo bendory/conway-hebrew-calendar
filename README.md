@@ -1,5 +1,7 @@
 # conway-hebrew-calendar
-An implementation of Professor John H. Conway's Hebrew Calendar algorithm.
+An implementation of
+[Professor John H. Conway](https://www.princeton.edu/news/2020/04/14/mathematician-john-horton-conway-magical-genius-known-inventing-game-life-dies-age)'s
+Hebrew Calendar algorithm.
 
 ## Background
 
