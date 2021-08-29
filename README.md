@@ -1,6 +1,19 @@
 # conway-hebrew-calendar
 An implementation of Professor John H. Conway's Hebrew Calendar algorithm.
 
+## Background
+
+Professor Conway was able to convert between Hebrew and Gregorian calendar dates
+by way of mental math in seconds. After his death, I learned that a
+[paper](https://slusky.ku.edu/wp-content/uploads/2020/08/CONWAY-AGUS-SLUSKY-PDF.pdf)
+explaining his algorthim had been published in the January 2014 edition of The
+College Mathematics Journal. (For archival purposes, I've copied the PDF
+[here](pdf/conway-agus-slusky.pdf).)
+
+This repo implements Conway's Hebrew Calendar algorithm in Go.
+
+## Accuracy
+
 I've tested this implementation for accuracy using dates from 1 CE - 3000 CE by
 comparing to the Hebrew calendar behind http://www.hebcal.com/. Note that:
 
@@ -15,17 +28,6 @@ comparing to the Hebrew calendar behind http://www.hebcal.com/. Note that:
    HaNasi](https://en.wikipedia.org/wiki/Hillel_II#Fixing_of_the_calendar). So
    this implementation projects a proleptic calculated Hillel Hebrew calendar
    (a term that I just made up) onto a proleptic Gregorian calendar.
-
-## Background
-
-Professor Conway was able to convert between Hebrew and Gregorian calendar dates
-by way of mental math in seconds. After his death, I learned that a
-[paper](https://slusky.ku.edu/wp-content/uploads/2020/08/CONWAY-AGUS-SLUSKY-PDF.pdf)
-explaining his algorthim had been published in the January 2014 edition of The
-College Mathematics Journal. (For archival purposes, I've copied the PDF
-[here](pdf/conway-agus-slusky.pdf).)
-
-This repo implements Conway's Hebrew Calendar algorithm in Go.
 
 ## Ambiguities
 
